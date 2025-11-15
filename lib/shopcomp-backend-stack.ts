@@ -1,16 +1,148 @@
-import * as cdk from 'aws-cdk-lib/core';
-import { Construct } from 'constructs';
-// import * as sqs from 'aws-cdk-lib/aws-sqs';
+import * as cdk from "aws-cdk-lib"
+import { Construct } from "constructs"
+import * as apigw from "aws-cdk-lib/aws-apigateway"
+import * as lambda from "aws-cdk-lib/aws-lambda"
+import * as lambdaNodejs from "aws-cdk-lib/aws-lambda-nodejs";
+import * as path from "node:path"
+import * as ec2 from "aws-cdk-lib/aws-ec2"
+import { Duration } from "aws-cdk-lib"
 
 export class ShopcompBackendStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
-    super(scope, id, props);
+    super(scope, id, props)
 
-    // The code that defines your stack goes here
+    // Import VPC
+    const vpc = ec2.Vpc.fromVpcAttributes(this, "VPC", {
+      vpcId: "vpc-00af27809d4ee6d0e",
 
-    // example resource
-    // const queue = new sqs.Queue(this, 'ShopcompBackendQueue', {
-    //   visibilityTimeout: cdk.Duration.seconds(300)
-    // });
+      availabilityZones: [
+        "us-east-1a",
+        "us-east-1b",
+        "us-east-1c"
+      ],
+
+      privateSubnetIds: [
+        "subnet-01c9945aed1421e38",
+        "subnet-06b6d3060c96ee6f4",
+        "subnet-00da31b049de1eacb",
+      ],
+    })
+
+    // Import security group
+    const securityGroup = ec2.SecurityGroup.fromSecurityGroupId(this, "SG",
+      "sg-0df434762caae7a53",
+      { mutable: false }
+    )
+
+
+    // Default Lambda function located in lib/default/default.mjs
+    const default_fn = new lambdaNodejs.NodejsFunction(this, "LambdaDefaultFunction", {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      handler: "default.handler",
+      code: lambda.Code.fromAsset(path.join(__dirname, "default")),
+      vpc: vpc,
+      securityGroups: [securityGroup],
+      timeout: Duration.seconds(3),
+    })
+
+
+    // REST API Gateway configuration
+    // TODO: Replace `IDENTIFIER` and `API_NAME`
+    const api_endpoint = new apigw.LambdaRestApi(this, "shopcompapi", {
+      handler: default_fn,
+      restApiName: "ShopcompAPI",      // Name that appears in API Gateway page
+      proxy: false,
+
+      // Recommended: CORS config
+      defaultCorsPreflightOptions: {
+        allowOrigins: apigw.Cors.ALL_ORIGINS,
+        allowMethods: apigw.Cors.ALL_METHODS,
+      },
+    })
+
+    // Create API resources /api/v1
+    // Add everything as a child of v1
+    // const api = api_endpoint.root.addResource("api")
+    // const v1 = api.addResource("v1")
+
+    const integration_parameters = {
+      proxy: false,
+      passthroughBehavior: apigw.PassthroughBehavior.WHEN_NO_MATCH,
+
+      integrationResponses: [
+        {
+          statusCode: "200",
+          responseTemplates: {
+            "application/json": "$input.json(\'$\')",
+          },
+          responseParameters: {
+            "method.response.header.Content-Type": "'application/json'",
+            "method.response.header.Access-Control-Allow-Origin": "'*'",
+            "method.response.header.Access-Control-Allow-Credentials": "'true'"
+          },
+        },
+        {
+          selectionPattern: "(\n|.)+",
+          statusCode: "400",
+          responseTemplates: {
+            "application/json": JSON.stringify({ 
+              state: "error", 
+              message: "$util.escapeJavaScript($input.path('$.errorMessage'))" 
+            })
+          },
+          responseParameters: {
+            "method.response.header.Content-Type": "'application/json'",
+            "method.response.header.Access-Control-Allow-Origin": "'*'",
+            "method.response.header.Access-Control-Allow-Credentials": "'true'"
+          },
+        }
+      ]
+    }
+
+    const response_parameters = {
+      methodResponses: [
+        {
+          // Successful response from the integration
+          statusCode: "200",
+          // Define what parameters are allowed or not
+          responseParameters: {
+            "method.response.header.Content-Type": true,
+            "method.response.header.Access-Control-Allow-Origin": true,
+            "method.response.header.Access-Control-Allow-Credentials": true
+          },
+        },
+        {
+          // Same thing for the error responses
+          statusCode: "400",
+          responseParameters: {
+            "method.response.header.Content-Type": true,
+            "method.response.header.Access-Control-Allow-Origin": true,
+            "method.response.header.Access-Control-Allow-Credentials": true
+          },
+        }
+      ]
+    }
+
+    // Add lambda functions here!
+    //  1. Copy `default_fn` declaration from above and use as template for a new Lambda function
+    //  2. Use the code below as a template to create LambdaIntegration resources
+    //
+    // --- Template ---
+    //
+    // const resource = v1.addResource("resource")                           // Name resource
+    // resource.addMethod(
+    //   "POST",                                                             // HTTP method
+    //   new apigw.LambdaIntegration(default_fn, integration_parameters),    // REPLACE default_fn
+    //   response_parameters
+    // )
+    //
+    // --- Template ---
+
+    // const resource = v1.addResource("resource")                           // Name resource
+    // resource.addMethod(
+    //   "POST",                                                             // HTTP method
+    //   new apigw.LambdaIntegration(default_fn, integration_parameters),    // REPLACE default_fn
+    //   response_parameters
+    // )
   }
 }
