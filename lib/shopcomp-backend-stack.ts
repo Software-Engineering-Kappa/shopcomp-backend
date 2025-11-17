@@ -36,7 +36,7 @@ export class ShopcompBackendStack extends cdk.Stack {
 
 
     // Default Lambda function located in lib/default/default.mjs
-    const default_fn = new lambdaNodejs.NodejsFunction(this, "LambdaDefaultFunction", {
+    const default_fn = new lambdaNodejs.NodejsFunction(this, "DefaultFunction", {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: "default.handler",
       code: lambda.Code.fromAsset(path.join(__dirname, "default")),
@@ -47,7 +47,6 @@ export class ShopcompBackendStack extends cdk.Stack {
 
 
     // REST API Gateway configuration
-    // TODO: Replace `IDENTIFIER` and `API_NAME`
     const api_endpoint = new apigw.LambdaRestApi(this, "shopcompapi", {
       handler: default_fn,
       restApiName: "ShopcompAPI",      // Name that appears in API Gateway page
