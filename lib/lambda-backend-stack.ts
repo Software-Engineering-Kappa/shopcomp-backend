@@ -7,7 +7,10 @@ import * as path from "node:path"
 import * as ec2 from "aws-cdk-lib/aws-ec2"
 import { Duration } from "aws-cdk-lib"
 
-export class ShopcompBackendStack extends cdk.Stack {
+/**
+ * Stack that contains the API Gateway and Lambda Functions
+ */
+export class LambdaStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props)
 
