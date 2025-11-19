@@ -1,8 +1,15 @@
 #!/usr/bin/env node
 import * as cdk from 'aws-cdk-lib/core';
 import { LambdaStack } from '../lib/lambda-backend-stack';
+import { AuthorizationStack } from '../lib/authorization-stack';
 
 const app = new cdk.App();
+
+// Setup authorization stack
+const authorizationStack = new AuthorizationStack(app, "AuthorizationStack", {})
+// export const userPoolClientId = authorizationStack.userPoolClient.userPoolClientId
+
+// Setup lambda stack
 new LambdaStack(app, "LambdaStack", {
   /* If you don't specify 'env', this stack will be environment-agnostic.
    * Account/Region-dependent features and context lookups will not work,
@@ -18,3 +25,4 @@ new LambdaStack(app, "LambdaStack", {
 
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
 });
+
