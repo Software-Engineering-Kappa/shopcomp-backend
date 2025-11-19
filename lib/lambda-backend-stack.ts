@@ -7,6 +7,11 @@ import * as path from "node:path"
 import * as ec2 from "aws-cdk-lib/aws-ec2"
 import { Duration } from "aws-cdk-lib"
 
+// Load environment variables in `.env` file
+import * as dotenv from "dotenv"
+dotenv.config()
+
+
 /**
  * Stack that contains the API Gateway and Lambda Functions
  */
@@ -50,7 +55,7 @@ export class LambdaStack extends cdk.Stack {
 
 
     // REST API Gateway configuration
-    const api_endpoint = new apigw.LambdaRestApi(this, "shopcompapi", {
+    const apiEndpoint = new apigw.LambdaRestApi(this, "shopcompapi", {
       handler: default_fn,
       restApiName: "ShopcompAPI",      // Name that appears in API Gateway page
       proxy: false,
@@ -62,12 +67,10 @@ export class LambdaStack extends cdk.Stack {
       },
     })
 
-    // Create API resources /api/v1
-    // Add everything as a child of v1
-    // const api = api_endpoint.root.addResource("api")
-    // const v1 = api.addResource("v1")
+    // Create top-level API resources here
+    const shopperResource = apiEndpoint.root.addResource("shopper")
 
-    const integration_parameters = {
+    const integrationParameters = {
       proxy: false,
       passthroughBehavior: apigw.PassthroughBehavior.WHEN_NO_MATCH,
 
@@ -87,9 +90,9 @@ export class LambdaStack extends cdk.Stack {
           selectionPattern: "(\n|.)+",
           statusCode: "400",
           responseTemplates: {
-            "application/json": JSON.stringify({ 
-              state: "error", 
-              message: "$util.escapeJavaScript($input.path('$.errorMessage'))" 
+            "application/json": JSON.stringify({
+              state: "error",
+              message: "$util.escapeJavaScript($input.path('$.errorMessage'))"
             })
           },
           responseParameters: {
@@ -101,7 +104,7 @@ export class LambdaStack extends cdk.Stack {
       ]
     }
 
-    const response_parameters = {
+    const responseParameters = {
       methodResponses: [
         {
           // Successful response from the integration
@@ -138,13 +141,29 @@ export class LambdaStack extends cdk.Stack {
     //   response_parameters
     // )
     //
-    // --- Template ---
 
-    // const resource = v1.addResource("resource")                           // Name resource
-    // resource.addMethod(
-    //   "POST",                                                             // HTTP method
-    //   new apigw.LambdaIntegration(default_fn, integration_parameters),    // REPLACE default_fn
-    //   response_parameters
-    // )
+
+    // BEGIN: /shopper/register endpoint
+
+    const registerShopperFn = new lambdaNodejs.NodejsFunction(this, "registerShopper", {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      handler: "registerShopper.handler",
+      code: lambda.Code.fromAsset(path.join(__dirname, "registerShopper")),
+      vpc: vpc,
+      securityGroups: [securityGroup],
+      timeout: Duration.seconds(3),
+      environment: {
+        USER_POOL_CLIENT_ID: process.env.USER_POOL_CLIENT_ID!,
+      },
+    })
+
+    const shopperLoginResource = shopperResource.addResource("register")
+    shopperLoginResource.addMethod(
+      "POST",
+      new apigw.LambdaIntegration(registerShopperFn, integrationParameters),
+      responseParameters
+    )
+
+    // END: /shopper/register endpoint
   }
 }
