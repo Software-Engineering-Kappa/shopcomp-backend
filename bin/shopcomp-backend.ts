@@ -7,6 +7,7 @@ const app = new cdk.App();
 
 // Setup authorization stack
 const authorizationStack = new AuthorizationStack(app, "AuthorizationStack", {})
+// export const userPoolClientId = authorizationStack.userPoolClient.userPoolClientId
 
 // Setup lambda stack
 new LambdaStack(app, "LambdaStack", {

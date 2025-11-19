@@ -15,6 +15,41 @@ export class AuthorizationStack extends cdk.Stack {
       userPoolName: "ShopComp-pool",
       signInCaseSensitive: false,       // case insensitive for username and email
       selfSignUpEnabled: true,
+
+      // User can sign in with username or email
+      signInAliases: {
+        username: true,
+        email: true,
+      },
+
+      // Verification email is sent after signing up
+      autoVerify: {
+        email: true,
+      },
+      userVerification: {
+        emailSubject: "Verify your email for ShopComp",
+        emailBody: "Thanks for signing up to ShopComp! Your verification code is {####}",
+        emailStyle: cognito.VerificationEmailStyle.CODE,
+      },
+
+      standardAttributes: {
+        email: {
+          required: true,
+          mutable: true,
+        }
+      },
+
+      // Password policy
+      passwordPolicy: {
+        minLength: 8,
+        requireLowercase: true,
+        requireUppercase: true,
+        requireDigits: true,
+        requireSymbols: false,
+      },
+
+      // Allow password reset via email
+      accountRecovery: cognito.AccountRecovery.EMAIL_ONLY,
     })
 
     // Add shopper and admin groups
@@ -27,7 +62,11 @@ export class AuthorizationStack extends cdk.Stack {
     })
 
     // Create client for this user pool
-    this.userPoolClient = this.userPool.addClient("Client")
+    this.userPoolClient = this.userPool.addClient("Client", {
+      authFlows: {
+        userPassword: true,
+      },
+    })
 
     // Output the client id when you run `cdk deploy`
     new cdk.CfnOutput(this, "ClientIdOutput", {
