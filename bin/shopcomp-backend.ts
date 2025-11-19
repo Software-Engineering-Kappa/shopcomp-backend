@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 import * as cdk from 'aws-cdk-lib/core';
-import { ShopcompBackendStack } from '../lib/shopcomp-backend-stack';
+import { LambdaStack } from '../lib/lambda-backend-stack';
 
 const app = new cdk.App();
-new ShopcompBackendStack(app, 'ShopcompBackendStack', {
+new LambdaStack(app, "LambdaStack", {
   /* If you don't specify 'env', this stack will be environment-agnostic.
    * Account/Region-dependent features and context lookups will not work,
    * but a single synthesized template can be deployed anywhere. */

@@ -7,7 +7,10 @@ import * as path from "node:path"
 import * as ec2 from "aws-cdk-lib/aws-ec2"
 import { Duration } from "aws-cdk-lib"
 
-export class ShopcompBackendStack extends cdk.Stack {
+/**
+ * Stack that contains the API Gateway and Lambda Functions
+ */
+export class LambdaStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props)
 
@@ -36,7 +39,7 @@ export class ShopcompBackendStack extends cdk.Stack {
 
 
     // Default Lambda function located in lib/default/default.mjs
-    const default_fn = new lambdaNodejs.NodejsFunction(this, "LambdaDefaultFunction", {
+    const default_fn = new lambdaNodejs.NodejsFunction(this, "DefaultFunction", {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: "default.handler",
       code: lambda.Code.fromAsset(path.join(__dirname, "default")),
@@ -47,7 +50,6 @@ export class ShopcompBackendStack extends cdk.Stack {
 
 
     // REST API Gateway configuration
-    // TODO: Replace `IDENTIFIER` and `API_NAME`
     const api_endpoint = new apigw.LambdaRestApi(this, "shopcompapi", {
       handler: default_fn,
       restApiName: "ShopcompAPI",      // Name that appears in API Gateway page
