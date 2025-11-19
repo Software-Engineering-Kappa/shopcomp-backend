@@ -78,7 +78,30 @@ export class LambdaStack extends cdk.Stack {
         {
           statusCode: "200",
           responseTemplates: {
-            "application/json": "$input.json(\'$\')",
+            "application/json": `
+              #set($allParams = $input.params())
+              {
+                "body": $input.body,
+                "queryStringParameters": {
+                  #foreach($param in $allParams.querystring.keySet())
+                    "$param": "$util.escapeJavaScript($allParams.querystring.get($param))"
+                    #if($foreach.hasNext),#end
+                  #end
+                },
+                "pathParameters": {
+                  #foreach($param in $allParams.path.keySet())
+                    "$param": "$util.escapeJavaScript($allParams.path.get($param))"
+                    #if($foreach.hasNext),#end
+                  #end
+                },
+                "headers": {
+                  #foreach($param in $allParams.header.keySet())
+                    "$param": "$util.escapeJavaScript($allParams.header.get($param))"
+                    #if($foreach.hasNext),#end
+                  #end
+                }
+              }
+            `
           },
           responseParameters: {
             "method.response.header.Content-Type": "'application/json'",
@@ -161,7 +184,7 @@ export class LambdaStack extends cdk.Stack {
     shopperLoginResource.addMethod(
       "POST",
       new apigw.LambdaIntegration(registerShopperFn, integrationParameters),
-      responseParameters
+      responseParameters,
     )
 
     // END: /shopper/register endpoint
