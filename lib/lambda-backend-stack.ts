@@ -7,6 +7,11 @@ import * as path from "node:path"
 import * as ec2 from "aws-cdk-lib/aws-ec2"
 import { Duration } from "aws-cdk-lib"
 
+// Load environment variables in `.env` file
+import * as dotenv from "dotenv"
+dotenv.config()
+
+
 /**
  * Stack that contains the API Gateway and Lambda Functions
  */
@@ -37,7 +42,6 @@ export class LambdaStack extends cdk.Stack {
       { mutable: false }
     )
 
-
     // Default Lambda function located in lib/default/default.mjs
     const default_fn = new lambdaNodejs.NodejsFunction(this, "DefaultFunction", {
       runtime: lambda.Runtime.NODEJS_22_X,
@@ -48,12 +52,10 @@ export class LambdaStack extends cdk.Stack {
       timeout: Duration.seconds(3),
     })
 
-
     // REST API Gateway configuration
-    const api_endpoint = new apigw.LambdaRestApi(this, "shopcompapi", {
-      handler: default_fn,
+    const apiEndpoint = new apigw.RestApi(this, "shopcompapi", {
       restApiName: "ShopcompAPI",      // Name that appears in API Gateway page
-      proxy: false,
+      // proxy: false,
 
       // Recommended: CORS config
       defaultCorsPreflightOptions: {
@@ -62,68 +64,88 @@ export class LambdaStack extends cdk.Stack {
       },
     })
 
-    // Create API resources /api/v1
-    // Add everything as a child of v1
-    // const api = api_endpoint.root.addResource("api")
-    // const v1 = api.addResource("v1")
+    // Create top-level API resources here
+    const shopperResource = apiEndpoint.root.addResource("shopper")
 
-    const integration_parameters = {
-      proxy: false,
-      passthroughBehavior: apigw.PassthroughBehavior.WHEN_NO_MATCH,
-
-      integrationResponses: [
-        {
-          statusCode: "200",
-          responseTemplates: {
-            "application/json": "$input.json(\'$\')",
-          },
-          responseParameters: {
-            "method.response.header.Content-Type": "'application/json'",
-            "method.response.header.Access-Control-Allow-Origin": "'*'",
-            "method.response.header.Access-Control-Allow-Credentials": "'true'"
-          },
-        },
-        {
-          selectionPattern: "(\n|.)+",
-          statusCode: "400",
-          responseTemplates: {
-            "application/json": JSON.stringify({ 
-              state: "error", 
-              message: "$util.escapeJavaScript($input.path('$.errorMessage'))" 
-            })
-          },
-          responseParameters: {
-            "method.response.header.Content-Type": "'application/json'",
-            "method.response.header.Access-Control-Allow-Origin": "'*'",
-            "method.response.header.Access-Control-Allow-Credentials": "'true'"
-          },
-        }
-      ]
-    }
-
-    const response_parameters = {
-      methodResponses: [
-        {
-          // Successful response from the integration
-          statusCode: "200",
-          // Define what parameters are allowed or not
-          responseParameters: {
-            "method.response.header.Content-Type": true,
-            "method.response.header.Access-Control-Allow-Origin": true,
-            "method.response.header.Access-Control-Allow-Credentials": true
-          },
-        },
-        {
-          // Same thing for the error responses
-          statusCode: "400",
-          responseParameters: {
-            "method.response.header.Content-Type": true,
-            "method.response.header.Access-Control-Allow-Origin": true,
-            "method.response.header.Access-Control-Allow-Credentials": true
-          },
-        }
-      ]
-    }
+//     const integrationParameters = {
+//       proxy: false,
+//       passthroughBehavior: apigw.PassthroughBehavior.WHEN_NO_MATCH,
+//
+//       integrationResponses: [
+//         {
+//           statusCode: "200",
+//           responseTemplates: {
+//             "application/json": `
+// #set($allParams = $input.params())
+// {
+// "body" : $input.json('$'),
+// "params" : {
+// #foreach($type in $allParams.keySet())
+//     #set($params = $allParams.get($type))
+// "$type" : {
+//     #foreach($paramName in $params.keySet())
+//     "$paramName" : "$util.escapeJavaScript($params.get($paramName))"
+//         #if($foreach.hasNext),#end
+//     #end
+// }
+//     #if($foreach.hasNext),#end
+// #end
+// },
+// "stage-variables" : {
+// #foreach($key in $stageVariables.keySet())
+// "$key" : "$util.escapeJavaScript($stageVariables.get($key))"
+//     #if($foreach.hasNext),#end
+// #end
+// }
+// }`
+//           },
+//           responseParameters: {
+//             "method.response.header.Content-Type": "'application/json'",
+//             "method.response.header.Access-Control-Allow-Origin": "'*'",
+//             "method.response.header.Access-Control-Allow-Credentials": "'true'"
+//           },
+//         },
+//         {
+//           selectionPattern: "(\n|.)+",
+//           statusCode: "400",
+//           responseTemplates: {
+//             "application/json": JSON.stringify({
+//               state: "error",
+//               message: "$util.escapeJavaScript($input.path('$.errorMessage'))"
+//             })
+//           },
+//           responseParameters: {
+//             "method.response.header.Content-Type": "'application/json'",
+//             "method.response.header.Access-Control-Allow-Origin": "'*'",
+//             "method.response.header.Access-Control-Allow-Credentials": "'true'"
+//           },
+//         }
+//       ]
+//     }
+//
+//     const responseParameters = {
+//       methodResponses: [
+//         {
+//           // Successful response from the integration
+//           statusCode: "200",
+//           // Define what parameters are allowed or not
+//           responseParameters: {
+//             "method.response.header.Content-Type": true,
+//             "method.response.header.Access-Control-Allow-Origin": true,
+//             "method.response.header.Access-Control-Allow-Credentials": true
+//           },
+//         },
+//         {
+//           // Same thing for the error responses
+//           statusCode: "400",
+//           responseParameters: {
+//             "method.response.header.Content-Type": true,
+//             "method.response.header.Access-Control-Allow-Origin": true,
+//             "method.response.header.Access-Control-Allow-Credentials": true
+//           },
+//         }
+//       ]
+//     }
 
     // Add lambda functions here!
     //  1. Copy `default_fn` declaration from above and use as template for a new Lambda function
@@ -138,13 +160,28 @@ export class LambdaStack extends cdk.Stack {
     //   response_parameters
     // )
     //
-    // --- Template ---
 
-    // const resource = v1.addResource("resource")                           // Name resource
-    // resource.addMethod(
-    //   "POST",                                                             // HTTP method
-    //   new apigw.LambdaIntegration(default_fn, integration_parameters),    // REPLACE default_fn
-    //   response_parameters
-    // )
+
+    // BEGIN: /shopper/register endpoint
+
+    const registerShopperFn = new lambdaNodejs.NodejsFunction(this, "registerShopper", {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      handler: "registerShopper.handler",
+      code: lambda.Code.fromAsset(path.join(__dirname, "registerShopper")),
+      vpc: vpc,
+      securityGroups: [securityGroup],
+      timeout: Duration.seconds(3),
+      environment: {
+        USER_POOL_CLIENT_ID: process.env.USER_POOL_CLIENT_ID!,
+      },
+    })
+
+    const shopperLoginResource = shopperResource.addResource("register")
+    shopperLoginResource.addMethod(
+      "POST",
+      new apigw.LambdaIntegration(registerShopperFn),
+    )
+
+    // END: /shopper/register endpoint
   }
 }
