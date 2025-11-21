@@ -57,7 +57,6 @@ export class LambdaStack extends cdk.Stack {
     // REST API Gateway configuration
     this.apiEndpoint = new apigw.RestApi(this, "shopcompapi", {
       restApiName: "ShopcompAPI",      // Name that appears in API Gateway page
-      // proxy: false,
 
       // Recommended: CORS config
       defaultCorsPreflightOptions: {
@@ -68,86 +67,6 @@ export class LambdaStack extends cdk.Stack {
 
     // Create top-level API resources here
     const shopperResource = this.apiEndpoint.root.addResource("shopper")
-
-//     const integrationParameters = {
-//       proxy: false,
-//       passthroughBehavior: apigw.PassthroughBehavior.WHEN_NO_MATCH,
-//
-//       integrationResponses: [
-//         {
-//           statusCode: "200",
-//           responseTemplates: {
-//             "application/json": `
-// #set($allParams = $input.params())
-// {
-// "body" : $input.json('$'),
-// "params" : {
-// #foreach($type in $allParams.keySet())
-//     #set($params = $allParams.get($type))
-// "$type" : {
-//     #foreach($paramName in $params.keySet())
-//     "$paramName" : "$util.escapeJavaScript($params.get($paramName))"
-//         #if($foreach.hasNext),#end
-//     #end
-// }
-//     #if($foreach.hasNext),#end
-// #end
-// },
-// "stage-variables" : {
-// #foreach($key in $stageVariables.keySet())
-// "$key" : "$util.escapeJavaScript($stageVariables.get($key))"
-//     #if($foreach.hasNext),#end
-// #end
-// }
-// }`
-//           },
-//           responseParameters: {
-//             "method.response.header.Content-Type": "'application/json'",
-//             "method.response.header.Access-Control-Allow-Origin": "'*'",
-//             "method.response.header.Access-Control-Allow-Credentials": "'true'"
-//           },
-//         },
-//         {
-//           selectionPattern: "(\n|.)+",
-//           statusCode: "400",
-//           responseTemplates: {
-//             "application/json": JSON.stringify({
-//               state: "error",
-//               message: "$util.escapeJavaScript($input.path('$.errorMessage'))"
-//             })
-//           },
-//           responseParameters: {
-//             "method.response.header.Content-Type": "'application/json'",
-//             "method.response.header.Access-Control-Allow-Origin": "'*'",
-//             "method.response.header.Access-Control-Allow-Credentials": "'true'"
-//           },
-//         }
-//       ]
-//     }
-//
-//     const responseParameters = {
-//       methodResponses: [
-//         {
-//           // Successful response from the integration
-//           statusCode: "200",
-//           // Define what parameters are allowed or not
-//           responseParameters: {
-//             "method.response.header.Content-Type": true,
-//             "method.response.header.Access-Control-Allow-Origin": true,
-//             "method.response.header.Access-Control-Allow-Credentials": true
-//           },
-//         },
-//         {
-//           // Same thing for the error responses
-//           statusCode: "400",
-//           responseParameters: {
-//             "method.response.header.Content-Type": true,
-//             "method.response.header.Access-Control-Allow-Origin": true,
-//             "method.response.header.Access-Control-Allow-Credentials": true
-//           },
-//         }
-//       ]
-//     }
 
     // Add lambda functions here!
     //  1. Copy `default_fn` declaration from above and use as template for a new Lambda function
