@@ -13,9 +13,11 @@ dotenv.config()
 
 
 /**
- * Stack that contains the API Gateway and Lambda Functions
+ * Stack that contains the API Gateway and production-ready Lambda Functions
  */
 export class LambdaStack extends cdk.Stack {
+  public readonly apiEndpoint: apigw.RestApi
+
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props)
 
@@ -53,7 +55,7 @@ export class LambdaStack extends cdk.Stack {
     })
 
     // REST API Gateway configuration
-    const apiEndpoint = new apigw.RestApi(this, "shopcompapi", {
+    this.apiEndpoint = new apigw.RestApi(this, "shopcompapi", {
       restApiName: "ShopcompAPI",      // Name that appears in API Gateway page
       // proxy: false,
 
@@ -65,7 +67,7 @@ export class LambdaStack extends cdk.Stack {
     })
 
     // Create top-level API resources here
-    const shopperResource = apiEndpoint.root.addResource("shopper")
+    const shopperResource = this.apiEndpoint.root.addResource("shopper")
 
 //     const integrationParameters = {
 //       proxy: false,
