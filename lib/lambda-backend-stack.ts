@@ -17,12 +17,14 @@ dotenv.config()
  */
 export class LambdaStack extends cdk.Stack {
   public readonly apiEndpoint: apigw.RestApi
+  public readonly vpc: ec2.IVpc
+  public readonly securityGroup: ec2.ISecurityGroup
 
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props)
 
     // Import VPC
-    const vpc = ec2.Vpc.fromVpcAttributes(this, "VPC", {
+    this.vpc = ec2.Vpc.fromVpcAttributes(this, "VPC", {
       vpcId: "vpc-00af27809d4ee6d0e",
 
       availabilityZones: [
@@ -39,7 +41,7 @@ export class LambdaStack extends cdk.Stack {
     })
 
     // Import security group
-    const securityGroup = ec2.SecurityGroup.fromSecurityGroupId(this, "SG",
+    this.securityGroup = ec2.SecurityGroup.fromSecurityGroupId(this, "SG",
       "sg-0df434762caae7a53",
       { mutable: false }
     )
@@ -49,8 +51,8 @@ export class LambdaStack extends cdk.Stack {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: "default.handler",
       code: lambda.Code.fromAsset(path.join(__dirname, "default")),
-      vpc: vpc,
-      securityGroups: [securityGroup],
+      vpc: this.vpc,
+      securityGroups: [this.securityGroup],
       timeout: Duration.seconds(3),
     })
 
@@ -88,8 +90,8 @@ export class LambdaStack extends cdk.Stack {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: "registerShopper.handler",
       code: lambda.Code.fromAsset(path.join(__dirname, "registerShopper")),
-      vpc: vpc,
-      securityGroups: [securityGroup],
+      vpc: this.vpc,
+      securityGroups: [this.securityGroup],
       timeout: Duration.seconds(3),
       environment: {
         USER_POOL_CLIENT_ID: process.env.USER_POOL_CLIENT_ID!,
@@ -110,15 +112,14 @@ export class LambdaStack extends cdk.Stack {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: "confirmShopper.handler",
       code: lambda.Code.fromAsset(path.join(__dirname, "confirmShopper")),
-      vpc: vpc,
-      securityGroups: [securityGroup],
+      vpc: this.vpc,
+      securityGroups: [this.securityGroup],
       timeout: Duration.seconds(3),
       environment: {
         USER_POOL_CLIENT_ID: process.env.USER_POOL_CLIENT_ID!,
       },
     })
 
-    // END: /shopper/register endpoint
     const shopperConfirmResource = shopperResource.addResource("confirm")
     shopperConfirmResource.addMethod(
       "POST",

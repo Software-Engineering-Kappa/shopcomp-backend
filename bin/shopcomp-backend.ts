@@ -33,18 +33,26 @@ const lambdaStack = new LambdaStack(app, "LambdaStack", {
 // Dev stacks
 
 new AndrewStack(app, "AndrewStack", {
-  apiEndpoint: lambdaStack.apiEndpoint
+  apiEndpoint: lambdaStack.apiEndpoint,
+  vpc: lambdaStack.vpc,
+  securityGroup: lambdaStack.securityGroup,
 })
 
 new OwenStack(app, "OwenStack", {
-  apiEndpoint: lambdaStack.apiEndpoint
+  apiEndpoint: lambdaStack.apiEndpoint,
+  vpc: lambdaStack.vpc,
+  securityGroup: lambdaStack.securityGroup,
 })
 
 new RyanStack(app, "RyanStack", {
-  apiEndpoint: lambdaStack.apiEndpoint
+  apiEndpoint: lambdaStack.apiEndpoint,
+  vpc: lambdaStack.vpc,
+  securityGroup: lambdaStack.securityGroup,
 })
 
 new ThomasStack(app, "ThomasStack", {
-  apiEndpoint: lambdaStack.apiEndpoint
+  apiEndpoint: lambdaStack.apiEndpoint,
+  vpc: lambdaStack.vpc,
+  securityGroup: lambdaStack.securityGroup,
 })
 
