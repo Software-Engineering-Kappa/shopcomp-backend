@@ -21,15 +21,15 @@ export class AndrewStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: AndrewStackProps) {
     super(scope, id, props)
 
-    const shopperResource = props!.apiEndpoint.root.getResource("/shopper")
-      ?? props!.apiEndpoint.root.addResource("/shopper")
+    const shopperResource = props!.apiEndpoint.root.getResource("shopper")
+      ?? props!.apiEndpoint.root.addResource("shopper")
 
     // BEGIN: /shopper/resend_code endpoint
 
     const resendConfirmationFn = new lambdaNodejs.NodejsFunction(this, "resendConfirmation", {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: "resendConfirmation.handler",
-      code: lambda.Code.fromAsset(path.join(__dirname, "confirmShopper")),
+      code: lambda.Code.fromAsset(path.join(__dirname, "resendConfirmation")),
       vpc: props!.vpc,
       securityGroups: [props!.securityGroup],
       timeout: Duration.seconds(3),
@@ -38,7 +38,7 @@ export class AndrewStack extends cdk.Stack {
       },
     })
 
-    const resendConfirmationResource = shopperResource.addResource("confirm")
+    const resendConfirmationResource = shopperResource.addResource("resend_confirmation")
     resendConfirmationResource.addMethod(
       "POST",
       new apigw.LambdaIntegration(resendConfirmationFn),
