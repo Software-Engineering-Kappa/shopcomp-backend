@@ -1,7 +1,11 @@
 #!/usr/bin/env node
-import * as cdk from 'aws-cdk-lib/core';
-import { LambdaStack } from '../lib/lambda-backend-stack';
-import { AuthorizationStack } from '../lib/authorization-stack';
+import * as cdk from 'aws-cdk-lib/core'
+import { LambdaStack } from '../lib/lambda-backend-stack'
+import { AuthorizationStack } from '../lib/authorization-stack'
+import { AndrewStack } from "../lib/andrew-stack"
+import { OwenStack } from "../lib/owen-stack"
+import { RyanStack } from "../lib/ryan-stack"
+import { ThomasStack } from "../lib/thomas-stack"
 
 const app = new cdk.App();
 
@@ -9,8 +13,8 @@ const app = new cdk.App();
 const authorizationStack = new AuthorizationStack(app, "AuthorizationStack", {})
 // export const userPoolClientId = authorizationStack.userPoolClient.userPoolClientId
 
-// Setup lambda stack
-new LambdaStack(app, "LambdaStack", {
+// "Master" lambda function stack
+const lambdaStack = new LambdaStack(app, "LambdaStack", {
   /* If you don't specify 'env', this stack will be environment-agnostic.
    * Account/Region-dependent features and context lookups will not work,
    * but a single synthesized template can be deployed anywhere. */
@@ -25,4 +29,22 @@ new LambdaStack(app, "LambdaStack", {
 
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
 });
+
+// Dev stacks
+
+new AndrewStack(app, "AndrewStack", {
+  apiEndpoint: lambdaStack.apiEndpoint
+})
+
+new OwenStack(app, "OwenStack", {
+  apiEndpoint: lambdaStack.apiEndpoint
+})
+
+new RyanStack(app, "RyanStack", {
+  apiEndpoint: lambdaStack.apiEndpoint
+})
+
+new ThomasStack(app, "ThomasStack", {
+  apiEndpoint: lambdaStack.apiEndpoint
+})
 
