@@ -4,7 +4,11 @@ import { LambdaStack } from '../lib/lambda-backend-stack'
 import { AuthorizationStack } from '../lib/authorization-stack'
 import { ApiStack } from "../lib/api-stack"
 import { VpcStack } from "../lib/vpc-stack"
+import { ConfirmShopperStack } from "../lib/confirm-shopper-stack"
+import { ListStoresStack } from "../lib/list-stores-stack"
 import { RegisterShopperStack } from "../lib/register-shopper-stack"
+import { ResendConfirmationStack } from "../lib/resend-confirmation-stack"
+import { ShowAccountDashboardStack } from "../lib/show-account-dashboard-stack"
 
 import { AndrewStack } from "../lib/andrew-stack"
 import { OwenStack } from "../lib/owen-stack"
@@ -23,11 +27,36 @@ const apiStack = new ApiStack(app, "ApiStack", {})
 // Setup VPC stack
 const vpcStack = new VpcStack(app, "VpcStack", {})
 
-// RegisterShopper
+new ConfirmShopperStack(app, "ConfirmShopperStack", {
+  apiEndpoint: apiStack.apiEndpoint,
+  vpc: vpcStack.vpc,
+  securityGroup: vpcStack.securityGroup,
+})
+
+new ListStoresStack(app, "ListStoresStack", {
+  apiEndpoint: apiStack.apiEndpoint,
+  vpc: vpcStack.vpc,
+  securityGroup: vpcStack.securityGroup,
+  authorizer: authorizationStack.authorizer,
+})
+
 new RegisterShopperStack(app, "RegisterShopperStack", {
   apiEndpoint: apiStack.apiEndpoint,
   vpc: vpcStack.vpc,
   securityGroup: vpcStack.securityGroup,
+})
+
+new ResendConfirmationStack(app, "ResendConfirmationStack", {
+  apiEndpoint: apiStack.apiEndpoint,
+  vpc: vpcStack.vpc,
+  securityGroup: vpcStack.securityGroup,
+})
+
+new ShowAccountDashboardStack(app, "ShowAccountDashboardStack", {
+  apiEndpoint: apiStack.apiEndpoint,
+  vpc: vpcStack.vpc,
+  securityGroup: vpcStack.securityGroup,
+  authorizer: authorizationStack.authorizer,
 })
 
 

@@ -23,33 +23,5 @@ export class ThomasStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: ThomasStackProps) {
     super(scope, id, props)
 
-    const shopperResource = props!.apiEndpoint.root.getResource("shopper")
-      ?? props!.apiEndpoint.root.addResource("shopper")
-
-    const dashboardResource = shopperResource.addResource("dashboard")
-
-    // BEGIN: /shopper/dashboard endpoint
-
-    const showAccountDashboardFn = new lambdaNodejs.NodejsFunction(this, "showAccountDashboard", {
-      runtime: lambda.Runtime.NODEJS_22_X,
-      handler: "showAccountDashboard.handler",
-      code: lambda.Code.fromAsset(path.join(__dirname, "showAccountDashboard")),
-      vpc: props!.vpc,
-      securityGroups: [props!.securityGroup],
-      timeout: Duration.seconds(3),
-      environment: {
-        host: process.env.DB_HOST!,
-        user: process.env.DB_USER!,
-        password: process.env.DB_PASSWORD!,
-        database: process.env.DB_NAME!
-      }
-    })
-
-    dashboardResource.addMethod("GET", new apigw.LambdaIntegration(showAccountDashboardFn), {
-      authorizer: props!.authorizer,
-      authorizationType: apigw.AuthorizationType.COGNITO
-    });
-
-    // END: /shopper/dashboard endpoint
   }
 }

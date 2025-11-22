@@ -46,26 +46,5 @@ export class LambdaStack extends cdk.Stack {
     //
 
 
-    // BEGIN: /shopper/confirm endpoint
-
-    const confirmShopperFn = new lambdaNodejs.NodejsFunction(this, "confirmShopper", {
-      runtime: lambda.Runtime.NODEJS_22_X,
-      handler: "confirmShopper.handler",
-      code: lambda.Code.fromAsset(path.join(__dirname, "confirmShopper")),
-      vpc: this.vpc,
-      securityGroups: [this.securityGroup],
-      timeout: Duration.seconds(3),
-      environment: {
-        USER_POOL_CLIENT_ID: process.env.USER_POOL_CLIENT_ID!,
-      },
-    })
-
-    const shopperConfirmResource = shopperResource.addResource("confirm")
-    shopperConfirmResource.addMethod(
-      "POST",
-      new apigw.LambdaIntegration(confirmShopperFn),
-    )
-
-    // END: /shopper/confirm endpoint
   }
 }
