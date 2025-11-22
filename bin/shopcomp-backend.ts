@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import * as cdk from 'aws-cdk-lib/core'
-import { LambdaStack } from '../lib/lambda-backend-stack'
+// import { LambdaStack } from '../lib/lambda-backend-stack'
 import { AuthorizationStack } from '../lib/authorization-stack'
 import { ApiStack } from "../lib/api-stack"
 import { VpcStack } from "../lib/vpc-stack"
