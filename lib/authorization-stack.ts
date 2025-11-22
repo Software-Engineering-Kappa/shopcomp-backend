@@ -1,12 +1,10 @@
 import * as cdk from "aws-cdk-lib"
 import { Construct } from "constructs"
-import * as apigw from "aws-cdk-lib/aws-apigateway"
 import * as cognito from "aws-cdk-lib/aws-cognito"
 
 export class AuthorizationStack extends cdk.Stack {
   public readonly userPool: cognito.UserPool;
   public readonly userPoolClient: cognito.UserPoolClient;
-  public readonly authorizer: apigw.CognitoUserPoolsAuthorizer;
 
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props)
