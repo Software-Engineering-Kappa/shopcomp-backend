@@ -45,5 +45,27 @@ export class AndrewStack extends cdk.Stack {
     )
 
     // END: /shopper/resend_code endpoint
+
+    // BEGIN: /shopper/login endpoint
+
+    const loginShopperFn = new lambdaNodejs.NodejsFunction(this, "loginShopper", {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      handler: "loginShopper.handler",
+      code: lambda.Code.fromAsset(path.join(__dirname, "loginShopper")),
+      vpc: props!.vpc,
+      securityGroups: [props!.securityGroup],
+      timeout: Duration.seconds(3),
+      environment: {
+        USER_POOL_CLIENT_ID: process.env.USER_POOL_CLIENT_ID!,
+      },
+    })
+
+    const loginResource = shopperResource.addResource("login")
+    loginResource.addMethod(
+      "POST",
+      new apigw.LambdaIntegration(loginShopperFn),
+    )
+
+    // END: /shopper/login endpoint
   }
 }
