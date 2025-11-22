@@ -6,11 +6,15 @@ import * as lambdaNodejs from "aws-cdk-lib/aws-lambda-nodejs";
 import * as path from "node:path"
 import * as ec2 from "aws-cdk-lib/aws-ec2"
 import { Duration } from "aws-cdk-lib"
+import * as cognito from "aws-cdk-lib/aws-cognito"
 
 // Load environment variables in `.env` file
 import * as dotenv from "dotenv"
 dotenv.config()
 
+interface LambdaStackProps extends cdk.StackProps {
+  userPool: cognito.IUserPool  // Add this
+}
 
 /**
  * Stack that contains the API Gateway and production-ready Lambda Functions
@@ -19,9 +23,12 @@ export class LambdaStack extends cdk.Stack {
   public readonly apiEndpoint: apigw.RestApi
   public readonly vpc: ec2.IVpc
   public readonly securityGroup: ec2.ISecurityGroup
+  public readonly authorizer: apigw.CognitoUserPoolsAuthorizer
+  public readonly userPool: cognito.IUserPool
 
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props: LambdaStackProps) { 
     super(scope, id, props)
+    this.userPool = props.userPool
 
     // Import VPC
     this.vpc = ec2.Vpc.fromVpcAttributes(this, "VPC", {
@@ -65,6 +72,10 @@ export class LambdaStack extends cdk.Stack {
         allowOrigins: apigw.Cors.ALL_ORIGINS,
         allowMethods: apigw.Cors.ALL_METHODS,
       },
+    })
+
+    this.authorizer = new apigw.CognitoUserPoolsAuthorizer(this, 'Authorizer', {
+      cognitoUserPools: [this.userPool]
     })
 
     // Create top-level API resources here

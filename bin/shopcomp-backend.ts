@@ -15,6 +15,7 @@ const authorizationStack = new AuthorizationStack(app, "AuthorizationStack", {})
 
 // "Master" lambda function stack
 const lambdaStack = new LambdaStack(app, "LambdaStack", {
+  userPool: authorizationStack.userPool  // Pass User Pool here
   /* If you don't specify 'env', this stack will be environment-agnostic.
    * Account/Region-dependent features and context lookups will not work,
    * but a single synthesized template can be deployed anywhere. */
@@ -54,5 +55,6 @@ new ThomasStack(app, "ThomasStack", {
   apiEndpoint: lambdaStack.apiEndpoint,
   vpc: lambdaStack.vpc,
   securityGroup: lambdaStack.securityGroup,
+  authorizer: lambdaStack.authorizer,
 })
 
