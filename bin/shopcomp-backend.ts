@@ -22,7 +22,9 @@ const authorizationStack = new AuthorizationStack(app, "AuthorizationStack", {})
 // export const userPoolClientId = authorizationStack.userPoolClient.userPoolClientId
 
 // Setup API stack
-const apiStack = new ApiStack(app, "ApiStack", {})
+const apiStack = new ApiStack(app, "ApiStack", {
+  userPool: authorizationStack.userPool,
+})
 
 // Setup VPC stack
 const vpcStack = new VpcStack(app, "VpcStack", {})
@@ -37,7 +39,7 @@ new ListStoresStack(app, "ListStoresStack", {
   apiEndpoint: apiStack.apiEndpoint,
   vpc: vpcStack.vpc,
   securityGroup: vpcStack.securityGroup,
-  authorizer: authorizationStack.authorizer,
+  authorizer: apiStack.authorizer,
 })
 
 new RegisterShopperStack(app, "RegisterShopperStack", {
@@ -56,7 +58,7 @@ new ShowAccountDashboardStack(app, "ShowAccountDashboardStack", {
   apiEndpoint: apiStack.apiEndpoint,
   vpc: vpcStack.vpc,
   securityGroup: vpcStack.securityGroup,
-  authorizer: authorizationStack.authorizer,
+  authorizer: apiStack.authorizer,
 })
 
 
