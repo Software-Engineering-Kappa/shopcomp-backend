@@ -23,19 +23,22 @@ export class ThomasStack extends cdk.Stack {
 
     // BEGIN: /shopper/dashboard endpoint
 
-    const showDashboardFn = new lambdaNodejs.NodejsFunction(this, "showDashoard", {
+    const showAccountDashboardFn = new lambdaNodejs.NodejsFunction(this, "showAccountDashboard", {
       runtime: lambda.Runtime.NODEJS_22_X,
-      handler: "showDashoard.handler",
-      code: lambda.Code.fromAsset(path.join(__dirname, "showDashoard")),
+      handler: "showAccountDashboard.handler",
+      code: lambda.Code.fromAsset(path.join(__dirname, "showAccountDashboard")),
       vpc: props!.vpc,
       securityGroups: [props!.securityGroup],
       timeout: Duration.seconds(3),
       environment: {
-        LOG_USER_POOL_CLIENT_ID: process.env.USER_POOL_CLIENT_ID!
+        host: process.env.DB_HOST!,
+        user: process.env.DB_USER!,
+        password: process.env.DB_PASSWORD!,
+        database: process.env.DB_NAME!
       }
     })
 
-    dashboardResource.addMethod("GET", new apigw.LambdaIntegration(showDashboardFn));
+    dashboardResource.addMethod("GET", new apigw.LambdaIntegration(showAccountDashboardFn));
     // END: /shopper/dashboard endpoint
   }
 }
