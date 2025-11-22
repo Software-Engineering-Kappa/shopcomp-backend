@@ -26,4 +26,4 @@
 2. **Deploy**
 - Build the project with `npm run build`
 - *Optional*: Preveiw resources to be deployed with `cdk synth`
-- Deploy LambdaStack (deploys Lambda functions & API Gateway) with `cdk deploy [LambdaFunctionName]Stack ApiStack`
+- Deploy LambdaStack (deploys Lambda functions & API Gateway) with `cdk deploy [LambdaFunctionName]Stack`
