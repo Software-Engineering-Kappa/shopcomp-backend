@@ -3,24 +3,27 @@ import { Construct } from "constructs"
 import * as apigw from "aws-cdk-lib/aws-apigateway"
 import * as ec2 from "aws-cdk-lib/aws-ec2"
 import * as lambda from "aws-cdk-lib/aws-lambda"
-import * as lambdaNodejs from "aws-cdk-lib/aws-lambda-nodejs";
+import * as lambdaNodejs from "aws-cdk-lib/aws-lambda-nodejs"
 import * as path from "node:path"
 import { Duration } from "aws-cdk-lib"
 import * as cognito from "aws-cdk-lib/aws-cognito"
-import { ApiGateway } from "aws-cdk-lib/aws-events-targets"
+
+// Load environment variables in `.env` file
+import * as dotenv from "dotenv"
+dotenv.config()
 
 interface ThomasStackProps extends cdk.StackProps {
   apiEndpoint: apigw.RestApi,
   vpc: ec2.IVpc,
   securityGroup: ec2.ISecurityGroup,
-  userPool: cognito.IUserPool
+  authorizer: apigw.IAuthorizer
 }
 
 export class ThomasStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: ThomasStackProps) {
     super(scope, id, props)
 
-    const dashboardResource = props!.apiEndpoint.root.getResource("dashboard")
+    const dashboardResource = props!.apiEndpoint.root.getResource("shopper")
       ?? props!.apiEndpoint.root.addResource("dashboard")
 
 
@@ -41,12 +44,8 @@ export class ThomasStack extends cdk.Stack {
       }
     })
 
-    const auth = new apigw.CognitoUserPoolsAuthorizer(this, 'Authorizer', {
-      cognitoUserPools: [props!.userPool]
-    })
-
     dashboardResource.addMethod("GET", new apigw.LambdaIntegration(showAccountDashboardFn), {
-      authorizer: auth,
+      authorizer: props!.authorizer,
       authorizationType: apigw.AuthorizationType.COGNITO
     });
     
