@@ -10,8 +10,12 @@
 - Create `[lambdaName].mjs` for your Lambda code and write the function.
 
 3. **Install dependencies**  
-`cd lib/[lambdaName]`
-`npm install`
+- `cd lib/[lambdaName]`
+- `npm install`
+
+4. **Create stack**
+- Edit `bin` to add a new stack (in alphabetical order)
+- Add `[usecase-name].stack` 
 
 ## How to CDK Deploy
 - Make sure you are in the root directory `cd ..`
