@@ -43,7 +43,9 @@ export class ShowAccountDashboardStack extends cdk.Stack {
     const shopperResource = props!.apiEndpoint.root.getResource("shopper")
       ?? props!.apiEndpoint.root.addResource("shopper")
 
-    shopperResource.addMethod("GET", new apigw.LambdaIntegration(showAccountDashboardFn), {
+    // /shopper/dashboard
+    const dashboardResource = shopperResource.addResource("dashboard")
+    dashboardResource.addMethod("GET", new apigw.LambdaIntegration(showAccountDashboardFn), {
       authorizer: props!.authorizer,
       authorizationType: apigw.AuthorizationType.COGNITO
     });
