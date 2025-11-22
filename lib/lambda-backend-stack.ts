@@ -63,17 +63,6 @@ export class LambdaStack extends cdk.Stack {
       timeout: Duration.seconds(3),
     })
 
-    // REST API Gateway configuration
-    this.apiEndpoint = new apigw.RestApi(this, "shopcompapi", {
-      restApiName: "ShopcompAPI",      // Name that appears in API Gateway page
-
-      // Recommended: CORS config
-      defaultCorsPreflightOptions: {
-        allowOrigins: apigw.Cors.ALL_ORIGINS,
-        allowMethods: apigw.Cors.ALL_METHODS,
-      },
-    })
-
     this.authorizer = new apigw.CognitoUserPoolsAuthorizer(this, 'Authorizer', {
       cognitoUserPools: [this.userPool]
     })
