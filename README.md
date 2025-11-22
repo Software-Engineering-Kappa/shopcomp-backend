@@ -14,8 +14,8 @@
 - `npm install`
 
 4. **Create stack**
-- Edit `bin` to add a new stack (in alphabetical order)
-- Add `[usecase-name].stack` 
+- Edit `shopcomp-backend.ts` in `bin` to add a new stack (in alphabetical order)
+- Add `[usecase-name].stack` in `lib`
 
 ## How to CDK Deploy
 - Make sure you are in the root directory `cd ..`
