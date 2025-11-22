@@ -2,6 +2,10 @@
 import * as cdk from 'aws-cdk-lib/core'
 import { LambdaStack } from '../lib/lambda-backend-stack'
 import { AuthorizationStack } from '../lib/authorization-stack'
+import { ApiStack } from "../lib/api-stack"
+import { VpcStack } from "../lib/vpc-stack"
+import { RegisterShopperStack } from "../lib/register-shopper-stack"
+
 import { AndrewStack } from "../lib/andrew-stack"
 import { OwenStack } from "../lib/owen-stack"
 import { RyanStack } from "../lib/ryan-stack"
@@ -12,6 +16,20 @@ const app = new cdk.App();
 // Setup authorization stack
 const authorizationStack = new AuthorizationStack(app, "AuthorizationStack", {})
 // export const userPoolClientId = authorizationStack.userPoolClient.userPoolClientId
+
+// Setup API stack
+const apiStack = new ApiStack(app, "ApiStack", {})
+
+// Setup VPC stack
+const vpcStack = new VpcStack(app, "VpcStack", {})
+
+// RegisterShopper
+new RegisterShopperStack(app, "RegisterShopperStack", {
+  apiEndpoint: apiStack.apiEndpoint,
+  vpc: vpcStack.vpc,
+  securityGroup: vpcStack.securityGroup,
+})
+
 
 // "Master" lambda function stack
 const lambdaStack = new LambdaStack(app, "LambdaStack", {

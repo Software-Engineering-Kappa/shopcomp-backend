@@ -30,8 +30,6 @@ export class LambdaStack extends cdk.Stack {
     super(scope, id, props)
     this.userPool = props.userPool
 
-    // Create top-level API resources here
-    const shopperResource = this.apiEndpoint.root.addResource("shopper")
 
     // Add lambda functions here!
     //  1. Copy `default_fn` declaration from above and use as template for a new Lambda function
@@ -47,27 +45,6 @@ export class LambdaStack extends cdk.Stack {
     // )
     //
 
-    // BEGIN: /shopper/register endpoint
-
-    const registerShopperFn = new lambdaNodejs.NodejsFunction(this, "registerShopper", {
-      runtime: lambda.Runtime.NODEJS_22_X,
-      handler: "registerShopper.handler",
-      code: lambda.Code.fromAsset(path.join(__dirname, "registerShopper")),
-      vpc: this.vpc,
-      securityGroups: [this.securityGroup],
-      timeout: Duration.seconds(3),
-      environment: {
-        USER_POOL_CLIENT_ID: process.env.USER_POOL_CLIENT_ID!,
-      },
-    })
-
-    const shopperLoginResource = shopperResource.addResource("register")
-    shopperLoginResource.addMethod(
-      "POST",
-      new apigw.LambdaIntegration(registerShopperFn),
-    )
-
-    // END: /shopper/register endpoint
 
     // BEGIN: /shopper/confirm endpoint
 
