@@ -9,13 +9,13 @@
 - Copy or create `package.json` (refer to `lib/default/package.json`)  
 - Create `[lambdaName].mjs` for your Lambda code and write the function.
 
-3. **Install dependencies**  
-- `cd lib/[lambdaName]`
-- `npm install`
-
-4. **Create stack**
+3. **Create stack**
 - Edit `shopcomp-backend.ts` in `bin` to add a new stack (in alphabetical order)
 - Add `[usecase-name].stack` in `lib`
+
+4. **Install dependencies**  
+- `cd lib/[lambdaName]`
+- `npm install`
 
 ## How to CDK Deploy
 - Make sure you are in the root directory `cd ..`
