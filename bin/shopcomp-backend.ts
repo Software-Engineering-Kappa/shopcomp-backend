@@ -54,5 +54,6 @@ new ThomasStack(app, "ThomasStack", {
   apiEndpoint: lambdaStack.apiEndpoint,
   vpc: lambdaStack.vpc,
   securityGroup: lambdaStack.securityGroup,
+  userPool: authorizationStack.userPool
 })
 

@@ -6,11 +6,14 @@ import * as lambda from "aws-cdk-lib/aws-lambda"
 import * as lambdaNodejs from "aws-cdk-lib/aws-lambda-nodejs";
 import * as path from "node:path"
 import { Duration } from "aws-cdk-lib"
+import * as cognito from "aws-cdk-lib/aws-cognito"
+import { ApiGateway } from "aws-cdk-lib/aws-events-targets"
 
 interface ThomasStackProps extends cdk.StackProps {
   apiEndpoint: apigw.RestApi,
   vpc: ec2.IVpc,
   securityGroup: ec2.ISecurityGroup,
+  userPool: cognito.IUserPool
 }
 
 export class ThomasStack extends cdk.Stack {
@@ -38,7 +41,15 @@ export class ThomasStack extends cdk.Stack {
       }
     })
 
-    dashboardResource.addMethod("GET", new apigw.LambdaIntegration(showAccountDashboardFn));
+    const auth = new apigw.CognitoUserPoolsAuthorizer(this, 'Authorizer', {
+      cognitoUserPools: [props!.userPool]
+    })
+
+    dashboardResource.addMethod("GET", new apigw.LambdaIntegration(showAccountDashboardFn), {
+      authorizer: auth,
+      authorizationType: apigw.AuthorizationType.COGNITO
+    });
+    
     // END: /shopper/dashboard endpoint
   }
 }
