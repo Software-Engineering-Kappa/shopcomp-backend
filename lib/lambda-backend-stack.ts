@@ -30,39 +30,6 @@ export class LambdaStack extends cdk.Stack {
     super(scope, id, props)
     this.userPool = props.userPool
 
-    // Import VPC
-    this.vpc = ec2.Vpc.fromVpcAttributes(this, "VPC", {
-      vpcId: "vpc-00af27809d4ee6d0e",
-
-      availabilityZones: [
-        "us-east-1a",
-        "us-east-1b",
-        "us-east-1c"
-      ],
-
-      privateSubnetIds: [
-        "subnet-01c9945aed1421e38",
-        "subnet-06b6d3060c96ee6f4",
-        "subnet-00da31b049de1eacb",
-      ],
-    })
-
-    // Import security group
-    this.securityGroup = ec2.SecurityGroup.fromSecurityGroupId(this, "SG",
-      "sg-0df434762caae7a53",
-      { mutable: false }
-    )
-
-    // Default Lambda function located in lib/default/default.mjs
-    const default_fn = new lambdaNodejs.NodejsFunction(this, "DefaultFunction", {
-      runtime: lambda.Runtime.NODEJS_22_X,
-      handler: "default.handler",
-      code: lambda.Code.fromAsset(path.join(__dirname, "default")),
-      vpc: this.vpc,
-      securityGroups: [this.securityGroup],
-      timeout: Duration.seconds(3),
-    })
-
     this.authorizer = new apigw.CognitoUserPoolsAuthorizer(this, 'Authorizer', {
       cognitoUserPools: [this.userPool]
     })
