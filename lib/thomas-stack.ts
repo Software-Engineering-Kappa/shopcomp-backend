@@ -23,9 +23,10 @@ export class ThomasStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: ThomasStackProps) {
     super(scope, id, props)
 
-    const dashboardResource = props!.apiEndpoint.root.getResource("shopper")
-      ?? props!.apiEndpoint.root.addResource("dashboard")
+    const shopperResource = props!.apiEndpoint.root.getResource("shopper")
+      ?? props!.apiEndpoint.root.addResource("shopper")
 
+    const dashboardResource = shopperResource.addResource("dashboard")
 
     // BEGIN: /shopper/dashboard endpoint
 
@@ -48,7 +49,7 @@ export class ThomasStack extends cdk.Stack {
       authorizer: props!.authorizer,
       authorizationType: apigw.AuthorizationType.COGNITO
     });
-    
+
     // END: /shopper/dashboard endpoint
   }
 }
