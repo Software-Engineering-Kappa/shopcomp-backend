@@ -30,10 +30,6 @@ export class LambdaStack extends cdk.Stack {
     super(scope, id, props)
     this.userPool = props.userPool
 
-    this.authorizer = new apigw.CognitoUserPoolsAuthorizer(this, 'Authorizer', {
-      cognitoUserPools: [this.userPool]
-    })
-
     // Create top-level API resources here
     const shopperResource = this.apiEndpoint.root.addResource("shopper")
 

@@ -69,6 +69,11 @@ export class AuthorizationStack extends cdk.Stack {
       },
     })
 
+    // Create authorizer for this user pool
+    this.authorizer = new apigw.CognitoUserPoolsAuthorizer(this, 'Authorizer', {
+      cognitoUserPools: [this.userPool]
+    })
+
     // Output the client id when you run `cdk deploy`
     new cdk.CfnOutput(this, "ClientIdOutput", {
       key: "ShopCompPoolClientId",
