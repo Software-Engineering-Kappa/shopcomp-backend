@@ -36,10 +36,10 @@ export class ListChainsStack extends cdk.Stack {
       timeout: Duration.seconds(3),
       environment: {
         LOG_USER_POOL_CLIENT_ID: process.env.USER_POOL_CLIENT_ID ?? "",
-        DB_HOST: process.env.RDS_HOST ?? "",
-        DB_USER: process.env.RDS_USER ?? "",
-        DB_PASSWORD: process.env.RDS_PASSWORD ?? "",
-        DB_DATABASE: process.env.RDS_DATABASE ?? "",
+        DB_HOST: process.env.DB_HOST ?? "",
+        DB_USER: process.env.DB_USER ?? "",
+        DB_PASSWORD: process.env.DB_PASSWORD ?? "",
+        DB_DATABASE: process.env.DB_DATABASE ?? "",
       }
     });
 
