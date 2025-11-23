@@ -1,4 +1,7 @@
 {
   "name": "showAccountDashboard",
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "dependencies": {
+    "mysql2": "^3.15.3"
+  }
 }
