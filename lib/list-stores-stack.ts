@@ -32,7 +32,11 @@ export class ListStoresStack extends cdk.Stack {
       securityGroups: [props!.securityGroup],
       timeout: Duration.seconds(3),
       environment: {
-        LOG_USER_POOL_CLIENT_ID: process.env.USER_POOL_CLIENT_ID!
+        USER_POOL_CLIENT_ID: process.env.USER_POOL_CLIENT_ID!,
+        host: process.env.DB_HOST!,
+        user: process.env.DB_USER!,
+        password: process.env.DB_PASSWORD!,
+        database: process.env.DB_NAME!
       }
     })
 

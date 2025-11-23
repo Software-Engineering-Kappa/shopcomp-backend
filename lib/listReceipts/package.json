@@ -1,0 +1,7 @@
+{
+  "name": "listReceipts",
+  "version": "1.0.0",
+  "dependencies": {
+    "sql2": "^0.0.1"
+  }
+}
