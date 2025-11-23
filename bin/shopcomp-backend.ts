@@ -11,6 +11,7 @@ import { LoginShopperStack } from "../lib/login-shopper-stack"
 import { RegisterShopperStack } from "../lib/register-shopper-stack"
 import { ResendConfirmationStack } from "../lib/resend-confirmation-stack"
 import { ShowAccountDashboardStack } from "../lib/show-account-dashboard-stack"
+import { ListReceiptsStack } from "../lib/list-receipts-stack"
 
 // import { AndrewStack } from "../lib/andrew-stack"
 // import { OwenStack } from "../lib/owen-stack"
@@ -35,6 +36,13 @@ new ConfirmShopperStack(app, "ConfirmShopperStack", {
   apiEndpoint: apiStack.apiEndpoint,
   vpc: vpcStack.vpc,
   securityGroup: vpcStack.securityGroup,
+})
+
+new ListReceiptsStack(app, "ListReceiptsStack", {
+  apiEndpoint: apiStack.apiEndpoint,
+  vpc: vpcStack.vpc,
+  securityGroup: vpcStack.securityGroup,
+  authorizer: apiStack.authorizer,
 })
 
 new ListChainsStack(app, "ListChainsStack", {
