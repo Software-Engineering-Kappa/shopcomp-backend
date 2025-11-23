@@ -40,7 +40,7 @@ export class ReviewActivityStack extends cdk.Stack {
     })
 
     // /shopper
-    const shopperResource = props!.apiEndpoint.root.resourceForPath("shopper") // getResources doesn't work
+    const shopperResource = props!.apiEndpoint.root.getResource("shopper") // getResources doesn't work
       ?? props!.apiEndpoint.root.addResource("shopper")
 
     // /shopper/review_activity

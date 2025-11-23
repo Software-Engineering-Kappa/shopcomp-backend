@@ -70,14 +70,14 @@ new ResendConfirmationStack(app, "ResendConfirmationStack", {
   securityGroup: vpcStack.securityGroup,
 })
 
-new ShowAccountDashboardStack(app, "ShowAccountDashboardStack", {
+new ReviewActivityStack(app, "ReviewActivityStack", {
   apiEndpoint: apiStack.apiEndpoint,
   vpc: vpcStack.vpc,
   securityGroup: vpcStack.securityGroup,
   authorizer: apiStack.authorizer,
 })
 
-new ReviewActivityStack(app, "ReviewActivityStack", {
+new ShowAccountDashboardStack(app, "ShowAccountDashboardStack", {
   apiEndpoint: apiStack.apiEndpoint,
   vpc: vpcStack.vpc,
   securityGroup: vpcStack.securityGroup,
