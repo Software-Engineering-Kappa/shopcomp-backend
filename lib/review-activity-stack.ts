@@ -40,11 +40,12 @@ export class ReviewActivityStack extends cdk.Stack {
     })
 
     // /shopper
-    const shopperResource = props!.apiEndpoint.root.getResource("shopper")
+    const shopperResource = props!.apiEndpoint.root.resourceForPath("shopper") // getResources doesn't work
       ?? props!.apiEndpoint.root.addResource("shopper")
 
-    // /shopper/dashboard
+    // /shopper/review_activity
     const reviewActivityResource = shopperResource.addResource("review_activity")
+    
     reviewActivityResource.addMethod("GET", new apigw.LambdaIntegration(reviewHistoryFn), {
       authorizer: props!.authorizer,
       authorizationType: apigw.AuthorizationType.COGNITO
