@@ -11,23 +11,23 @@ import { Duration } from "aws-cdk-lib"
 import * as dotenv from "dotenv"
 dotenv.config()
 
-interface ListStoresStackProps extends cdk.StackProps {
+interface AddStoresStackProps extends cdk.StackProps {
   apiEndpoint: apigw.RestApi,
   vpc: ec2.IVpc,
   securityGroup: ec2.ISecurityGroup,
   authorizer: apigw.IAuthorizer,
 }
 
-export class ListStoresStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: ListStoresStackProps) {
+export class AddStoresStack extends cdk.Stack {
+  constructor(scope: Construct, id: string, props?: AddStoresStackProps) {
     super(scope, id, props)
 
-    // BEGIN: /chains/{chainId}/stores endpoint
+    // -------------- /chains endpoint --------------
 
-    const listStoresFn = new lambdaNodejs.NodejsFunction(this, "listStores", {
+    const addStoresFn = new lambdaNodejs.NodejsFunction(this, "addStores", {
       runtime: lambda.Runtime.NODEJS_22_X,
-      handler: "listStores.handler",
-      code: lambda.Code.fromAsset(path.join(__dirname, "listStores")),
+      handler: "addStores.handler",
+      code: lambda.Code.fromAsset(path.join(__dirname, "addStores")),
       vpc: props!.vpc,
       securityGroups: [props!.securityGroup],
       timeout: Duration.seconds(3),
@@ -52,8 +52,8 @@ export class ListStoresStack extends cdk.Stack {
     const storesResource = chainIdResource.getResource("stores")
       ?? chainIdResource.addResource("stores")
 
-    storesResource.addMethod("GET", new apigw.LambdaIntegration(listStoresFn))
+    storesResource.addMethod("POST", new apigw.LambdaIntegration(addStoresFn))
 
-    // END: /chains/{chainId}/stores endpoint
+    // -------------- /chains endpoint --------------
   }
 }

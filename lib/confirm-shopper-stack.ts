@@ -40,7 +40,9 @@ export class ConfirmShopperStack extends cdk.Stack {
       ?? props!.apiEndpoint.root.addResource("shopper")
 
     // /shopper/confirm
-    const shopperConfirmResource = shopperResource.addResource("confirm")
+    const shopperConfirmResource = shopperResource.getResource("confirm")
+      ?? shopperResource.addResource("confirm")
+    
     shopperConfirmResource.addMethod(
       "POST",
       new apigw.LambdaIntegration(confirmShopperFn),

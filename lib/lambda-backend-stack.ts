@@ -37,7 +37,9 @@ export class LambdaStack extends cdk.Stack {
     //
     // --- Template ---
     //
-    // const resource = v1.addResource("resource")                           // Name resource
+    // const resource = v1.getResource("resource") ??                        // Name resource
+    //  v1.addResource("resource")                          
+    //
     // resource.addMethod(
     //   "POST",                                                             // HTTP method
     //   new apigw.LambdaIntegration(default_fn, integration_parameters),    // REPLACE default_fn
