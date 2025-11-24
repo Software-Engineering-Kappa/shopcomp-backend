@@ -18,7 +18,7 @@
 - `npm install`
 
 ## How to CDK Deploy
-- Make sure you are in the root directory `cd ..`
+- Make sure you are in the root directory `cd ../..`
 
 1. **IF FIRST TIME DEPLOYING**
 - `npm install`
