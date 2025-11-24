@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import * as cdk from 'aws-cdk-lib/core'
 // import { LambdaStack } from '../lib/lambda-backend-stack'
+import { AddStoresStack } from '../lib/add-stores-stack'
 import { AuthorizationStack } from '../lib/authorization-stack'
 import { ApiStack } from "../lib/api-stack"
 import { VpcStack } from "../lib/vpc-stack"
@@ -31,6 +32,13 @@ const apiStack = new ApiStack(app, "ApiStack", {
 
 // Setup VPC stack
 const vpcStack = new VpcStack(app, "VpcStack", {})
+
+new AddStoresStack(app, "AddStoresStack", {
+  apiEndpoint: apiStack.apiEndpoint,
+  vpc: vpcStack.vpc,
+  securityGroup: vpcStack.securityGroup,
+  authorizer: apiStack.authorizer,
+})
 
 new ConfirmShopperStack(app, "ConfirmShopperStack", {
   apiEndpoint: apiStack.apiEndpoint,

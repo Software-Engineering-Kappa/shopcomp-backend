@@ -40,7 +40,9 @@ export class ResendConfirmationStack extends cdk.Stack {
       ?? props!.apiEndpoint.root.addResource("shopper")
 
     // /shoper/resend_confirmation
-    const resendConfirmationResource = shopperResource.addResource("resend_confirmation")
+    const resendConfirmationResource = shopperResource.getResource("resend_confirmation")
+      ?? shopperResource.addResource("resend_confirmation")
+
     resendConfirmationResource.addMethod(
       "POST",
       new apigw.LambdaIntegration(resendConfirmationFn),

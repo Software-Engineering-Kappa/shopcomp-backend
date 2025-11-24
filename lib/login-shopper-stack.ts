@@ -38,7 +38,9 @@ export class LoginShopperStack extends cdk.Stack {
     const shopperResource = props!.apiEndpoint.root.getResource("shopper")
       ?? props!.apiEndpoint.root.addResource("shopper")
 
-    const loginResource = shopperResource.addResource("login")
+    const loginResource = shopperResource.getResource("login")
+      ?? shopperResource.addResource("login")
+
     loginResource.addMethod(
       "POST",
       new apigw.LambdaIntegration(loginShopperFn),
