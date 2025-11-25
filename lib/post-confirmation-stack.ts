@@ -8,10 +8,6 @@ import { Duration } from "aws-cdk-lib"
 import * as cognito from "aws-cdk-lib/aws-cognito"
 import * as iam from "aws-cdk-lib/aws-iam"
 
-// Load environment variables in `.env` file
-import * as dotenv from "dotenv"
-dotenv.config()
-
 interface PostConfirmationStackProps extends cdk.StackProps {
   vpc: ec2.IVpc,
   securityGroup: ec2.ISecurityGroup,
@@ -29,9 +25,6 @@ export class PostConfirmationStack extends cdk.Stack {
       vpc: props!.vpc,
       securityGroups: [props!.securityGroup],
       timeout: Duration.seconds(3),
-      environment: {
-        USER_POOL_CLIENT_ID: process.env.USER_POOL_CLIENT_ID!,
-      },
     })
 
     postConfirmationFn.addToRolePolicy(new iam.PolicyStatement({
