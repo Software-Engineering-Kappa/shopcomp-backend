@@ -32,6 +32,10 @@ export class RegisterShopperStack extends cdk.Stack {
       timeout: Duration.seconds(3),
       environment: {
         USER_POOL_CLIENT_ID: process.env.USER_POOL_CLIENT_ID!,
+        DB_HOST: process.env.DB_HOST!,
+        DB_USER: process.env.DB_USER!,
+        DB_PASSWORD: process.env.DB_PASSWORD!,
+        DB_NAME: process.env.DB_NAME!
       },
     })
 
