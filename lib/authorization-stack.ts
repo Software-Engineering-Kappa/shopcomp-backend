@@ -83,7 +83,8 @@ export class AuthorizationStack extends cdk.Stack {
     // Granting permission for the lambda function to change user groups
     postConfirmationFn.addToRolePolicy(new iam.PolicyStatement({
       actions: ["cognito-idp:AdminAddUserToGroup"],
-      resources: [this.userPool.userPoolArn]
+      // resources: [this.userPool.userPoolArn],
+      resources: ["*"],
     }))
 
     this.userPool.addTrigger(
