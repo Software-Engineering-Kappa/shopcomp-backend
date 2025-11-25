@@ -33,12 +33,13 @@ export class LoginShopperStack extends cdk.Stack {
       timeout: Duration.seconds(3),
       environment: {
         USER_POOL_CLIENT_ID: process.env.USER_POOL_CLIENT_ID!,
+        USER_POOL_ID: process.env.USER_POOL_ID!,
       },
     })
 
     // Give login function permission to list user groups
     loginShopperFn.addToRolePolicy(new iam.PolicyStatement({
-      actions: ["congito-idp:AdminListGroupsForUser"],
+      actions: ["cognito-idp:AdminListGroupsForUser"],
       resources: ["*"],
     }))
 
