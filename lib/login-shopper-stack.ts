@@ -6,6 +6,7 @@ import * as lambdaNodejs from "aws-cdk-lib/aws-lambda-nodejs";
 import * as path from "node:path"
 import * as ec2 from "aws-cdk-lib/aws-ec2"
 import { Duration } from "aws-cdk-lib"
+import * as iam from "aws-cdk-lib/aws-iam"
 
 // Load environment variables in `.env` file
 import * as dotenv from "dotenv"
@@ -32,8 +33,15 @@ export class LoginShopperStack extends cdk.Stack {
       timeout: Duration.seconds(3),
       environment: {
         USER_POOL_CLIENT_ID: process.env.USER_POOL_CLIENT_ID!,
+        USER_POOL_ID: process.env.USER_POOL_ID!,
       },
     })
+
+    // Give login function permission to list user groups
+    loginShopperFn.addToRolePolicy(new iam.PolicyStatement({
+      actions: ["cognito-idp:AdminListGroupsForUser"],
+      resources: ["*"],
+    }))
 
     const shopperResource = props!.apiEndpoint.root.getResource("shopper")
       ?? props!.apiEndpoint.root.addResource("shopper")
