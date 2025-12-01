@@ -4,6 +4,7 @@
 node_modules
 .env
 genai.txt
+gitreport-backend.txt
 
 # CDK asset staging directory
 .cdk.staging
