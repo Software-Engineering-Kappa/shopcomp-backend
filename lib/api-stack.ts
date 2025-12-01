@@ -2,6 +2,7 @@ import * as cdk from "aws-cdk-lib"
 import { Construct } from "constructs"
 import * as apigw from "aws-cdk-lib/aws-apigateway"
 import * as cognito from "aws-cdk-lib/aws-cognito"
+import * as lambda from "aws-cdk-lib/aws-lambda"
 
 interface ApiStackProps extends cdk.StackProps {
   userPool: cognito.UserPool,
@@ -19,10 +20,17 @@ export class ApiStack extends cdk.Stack {
       restApiName: "ShopcompAPI",      // Name that appears in API Gateway page
 
       // Recommended: CORS config
-      defaultCorsPreflightOptions: {
-        allowOrigins: apigw.Cors.ALL_ORIGINS,
-        allowMethods: apigw.Cors.ALL_METHODS,
-      },
+      // defaultCorsPreflightOptions: {
+      //   allowOrigins: [
+      //     "http://localhost:3000",    // local development
+      //     "http://localhost:3001",    // local development
+      //     "http://shop-comp-s3-bucket.s3-website-us-east-1.amazonaws.com"
+      //   ],
+      //   allowCredentials: true,
+      //   allowMethods: apigw.Cors.ALL_METHODS,
+      //   allowHeaders: apigw.Cors.DEFAULT_HEADERS,
+      // },
+      defaultCorsPreflightOptions: undefined,
     })
 
     // Create authorizer for this user pool
@@ -30,5 +38,39 @@ export class ApiStack extends cdk.Stack {
       cognitoUserPools: [props!.userPool]
     })
 
+    const allowedOrigins = [
+      "http://localhost:3000",    // local development
+      "http://localhost:3001",    // local development
+      "http://shop-comp-s3-bucket.s3-website-us-east-1.amazonaws.com"
+    ]
+
+    // Function to handle all OPTIONS requests for CORS preflight
+    const optionsHandler = new lambda.Function(this, "OptionsHandler", {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      handler: "index.handler",
+      code: lambda.Code.fromInline(`
+        exports.handler = async (event) => {
+          const origin = event.headers?.origin;
+          const allowed = ${JSON.stringify(allowedOrigins)};
+          const allowOrigin = allowed.includes(origin) ? origin : allowed[0];
+
+          return {
+            statusCode: 200,
+            headers: {
+              "Access-Control-Allow-Origin": allowOrigin,
+              "Access-Control-Allow-Credentials": "true",
+              "Access-Control-Allow-Headers": "Content-Type,Authorization",
+              "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
+              "Access-Control-Max-Age": "86400"
+            }
+          };
+        };
+      `),
+    });
+
+    // Make the functions handle OPTIONS for all paths
+    this.apiEndpoint.root
+      .addResource("{proxy+}")
+      .addMethod("OPTIONS", new apigw.LambdaIntegration(optionsHandler))
   }
 }
