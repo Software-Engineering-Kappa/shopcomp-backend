@@ -68,9 +68,31 @@ export class ApiStack extends cdk.Stack {
       `),
     });
 
-    // Make the functions handle OPTIONS for all paths
+    // Make optionsHandler handle OPTIONS for all paths
     this.apiEndpoint.root
       .addResource("{proxy+}")
       .addMethod("OPTIONS", new apigw.LambdaIntegration(optionsHandler))
+
+    // Add OPTIONS handler for the root itself
+    this.apiEndpoint.root.addMethod("OPTIONS", new apigw.LambdaIntegration(optionsHandler))
+
+    // Make error responses still have CORS headers
+    this.apiEndpoint.addGatewayResponse("cors4xx", {
+      type: apigw.ResponseType.DEFAULT_4XX,
+      responseHeaders: {
+        "Access-Control-Allow-Origin": "method.request.header.origin",
+        "Access-Control-Allow-Credentials": "'true'",
+      },
+    });
+
+    this.apiEndpoint.addGatewayResponse("cors5xx", {
+      type: apigw.ResponseType.DEFAULT_5XX,
+      responseHeaders: {
+        "Access-Control-Allow-Origin": "method.request.header.origin",
+        "Access-Control-Allow-Credentials": "'true'",
+      },
+    });
+
+
   }
 }
