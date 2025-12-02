@@ -49,31 +49,6 @@ export class ApiStack extends cdk.Stack {
       timeout: Duration.seconds(3),
     })
 
-    // Function to handle all OPTIONS requests for CORS preflight
-    // const optionsHandler = new lambda.Function(this, "optionsHandler", {
-    //   runtime: lambda.Runtime.NODEJS_22_X,
-    //   handler: "index.handler",
-    //   code: lambda.Code.fromInline(`
-    //     exports.handler = async (event) => {
-    //       const origin = event.headers.origin || event/headers.Origin
-    //       const allowed = ${JSON.stringify(allowedOrigins)}
-    //       const allowOrigin = allowed.includes(origin) ? origin : allowed[0]
-    //       console.log("Allowing origin: ", allowOrigin)
-    //
-    //       return {
-    //         statusCode: 200,
-    //         headers: {
-    //           "Access-Control-Allow-Origin": allowOrigin,
-    //           "Access-Control-Allow-Credentials": "true",
-    //           "Access-Control-Allow-Headers": "Content-Type,Authorization,X-Api-Key,X-Amz-Date,X-Amz-Security-Token,Accept,Origin,User-Agent",
-    //           "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
-    //         },
-    //         body: "",
-    //       }
-    //     }
-    //   `),
-    // });
-
     // Make optionsHandler handle OPTIONS for all paths
     this.apiEndpoint.root
       .addResource("{proxy+}")
