@@ -22,7 +22,7 @@ export class GetChainInfoStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: GetChainInfoStackProps) {
     super(scope, id, props)
 
-    // BEGIN: /chains/{chainId}/ endpoint
+    // BEGIN: /chains/{chainId} endpoint
 
     const getChainInfoFn = new lambdaNodejs.NodejsFunction(this, "getChainInfo", {
       runtime: lambda.Runtime.NODEJS_22_X,
@@ -47,12 +47,11 @@ export class GetChainInfoStack extends cdk.Stack {
     const chainIdResource = chainsResource.getResource("{chainId}")
       ?? chainsResource.addResource("{chainId}")
 
-    // TODO: Add authorizer
     chainIdResource.addMethod("GET", new apigw.LambdaIntegration(getChainInfoFn), {
-      // authorizer: props!.authorizer,
-      // authorizationType: apigw.AuthorizationType.COGNITO,
+      authorizer: props!.authorizer,
+      authorizationType: apigw.AuthorizationType.COGNITO,
     })
 
-    // END: /chains/{chainId}/stores endpoint
+    // END: /chains/{chainId} endpoint
   }
 }
