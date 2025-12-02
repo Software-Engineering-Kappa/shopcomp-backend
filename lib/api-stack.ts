@@ -45,7 +45,7 @@ export class ApiStack extends cdk.Stack {
     ]
 
     // Function to handle all OPTIONS requests for CORS preflight
-    const optionsHandler = new lambda.Function(this, "OptionsHandler", {
+    const optionsHandler = new lambda.Function(this, "optionsHandler", {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: "index.handler",
       code: lambda.Code.fromInline(`
@@ -61,7 +61,6 @@ export class ApiStack extends cdk.Stack {
               "Access-Control-Allow-Credentials": "true",
               "Access-Control-Allow-Headers": "Content-Type,Authorization",
               "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
-              "Access-Control-Max-Age": "86400"
             }
           };
         };
