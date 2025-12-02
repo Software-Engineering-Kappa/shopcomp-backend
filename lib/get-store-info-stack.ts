@@ -55,8 +55,10 @@ export class GetStoreInfoStack extends cdk.Stack {
     const storeIdResource = storesResource.getResource("{storeId}")
       ?? storesResource.addResource("{storeId}")
 
-    // TODO: add authorizer
-    storeIdResource.addMethod("GET", new apigw.LambdaIntegration(getStoreInfoFn))
+    storeIdResource.addMethod("GET", new apigw.LambdaIntegration(getStoreInfoFn), {
+      authorizer: props!.authorizer,
+      authorizationType: apigw.AuthorizationType.COGNITO,
+    })
 
     // BEGIN: /chains/{chainId}/stores/{storeId} endpoint
   }
