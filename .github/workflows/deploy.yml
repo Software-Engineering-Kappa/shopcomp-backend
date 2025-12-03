@@ -1,0 +1,55 @@
+name: Deploy CDK Stacks
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Cache Node Modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+
+      - name: Install CDK + root dependencies and build
+        run: |
+          npm install -g aws-cdk
+          npm install
+          npm run build
+
+      - name: Install Lambda Dependencies
+        run: |
+          for dir in lib/*/; do
+            if [ -f "$dir/package.json" ]; then
+              echo "Installing Lambda deps in $dir"
+              npm install --prefix "$dir"
+            fi
+          done
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: CDK bootstrap (if needed)
+        run: cdk bootstrap
+        continue-on-error: true
+
+      - name: Deploy all stacks
+        run: cdk deploy --all --require-approval never
+
