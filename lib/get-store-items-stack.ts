@@ -61,8 +61,8 @@ export class GetStoreItemsStack extends cdk.Stack {
 
     // TODO: add authorizer
     itemsResource.addMethod("GET", new apigw.LambdaIntegration(getStoreItemsFn), {
-      // authorizer: props!.authorizer,
-      // authorizationType: apigw.AuthorizationType.COGNITO,
+      authorizer: props!.authorizer,
+      authorizationType: apigw.AuthorizationType.COGNITO,
     })
 
     // BEGIN: /chains/{chainId}/stores/{storeId}/items endpoint
