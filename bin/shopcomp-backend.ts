@@ -6,6 +6,7 @@ import { AddChainsStack } from '../lib/add-chains-stack'
 import { AddReceiptsStack } from '../lib/add-receipts-stack'
 import { AuthorizationStack } from '../lib/authorization-stack'
 import { ApiStack } from "../lib/api-stack"
+import { DeleteChainStack } from "../lib/delete-chain-stack"
 import { VpcStack } from "../lib/vpc-stack"
 import { ConfirmShopperStack } from "../lib/confirm-shopper-stack"
 import { GetStoreInfoStack } from "../lib/get-store-info-stack"
@@ -65,6 +66,14 @@ new ConfirmShopperStack(app, "ConfirmShopperStack", {
   vpc: vpcStack.vpc,
   securityGroup: vpcStack.securityGroup,
 })
+
+new DeleteChainStack(app, "DeleteChainStack", {
+  apiEndpoint: apiStack.apiEndpoint,
+  vpc: vpcStack.vpc,
+  securityGroup: vpcStack.securityGroup,
+  authorizer: apiStack.authorizer,
+})
+
 
 new GetChainInfoStack(app, "GetChainInfoStack", {
   apiEndpoint: apiStack.apiEndpoint,
