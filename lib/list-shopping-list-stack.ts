@@ -40,6 +40,7 @@ export class ListShoppingListsStack extends cdk.Stack {
             }
         });
 
+        // /shopping_lists
         const shoppingListsResource = props!.apiEndpoint.root.getResource("shopping_lists")
             ?? props!.apiEndpoint.root.addResource("shopping_lists");
 
