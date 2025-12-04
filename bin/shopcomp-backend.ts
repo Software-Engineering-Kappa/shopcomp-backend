@@ -9,6 +9,7 @@ import { ApiStack } from "../lib/api-stack"
 import { VpcStack } from "../lib/vpc-stack"
 import { ConfirmShopperStack } from "../lib/confirm-shopper-stack"
 import { GetStoreInfoStack } from "../lib/get-store-info-stack"
+import { GetStoreItemsStack } from "../lib/get-store-items-stack"
 import { GetChainInfoStack } from "../lib/get-chain-info-stack"
 import { ListChainsStack } from "../lib/list-chains-stack"
 import { ListStoresStack } from "../lib/list-stores-stack"
@@ -66,6 +67,13 @@ new ConfirmShopperStack(app, "ConfirmShopperStack", {
 })
 
 new GetChainInfoStack(app, "GetChainInfoStack", {
+  apiEndpoint: apiStack.apiEndpoint,
+  vpc: vpcStack.vpc,
+  securityGroup: vpcStack.securityGroup,
+  authorizer: apiStack.authorizer,
+})
+
+new GetStoreItemsStack(app, "GetStoreItemsStack", {
   apiEndpoint: apiStack.apiEndpoint,
   vpc: vpcStack.vpc,
   securityGroup: vpcStack.securityGroup,
