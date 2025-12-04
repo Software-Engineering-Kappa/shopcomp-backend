@@ -52,7 +52,10 @@ export class ListStoresStack extends cdk.Stack {
     const storesResource = chainIdResource.getResource("stores")
       ?? chainIdResource.addResource("stores")
 
-    storesResource.addMethod("GET", new apigw.LambdaIntegration(listStoresFn))
+    storesResource.addMethod("GET", new apigw.LambdaIntegration(listStoresFn), {
+      authorizer: props!.authorizer,
+      authorizationType: apigw.AuthorizationType.COGNITO
+    });
 
     // END: /chains/{chainId}/stores endpoint
   }
