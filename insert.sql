@@ -4,6 +4,7 @@ DELETE FROM Items;
 DELETE FROM Receipts;
 DELETE FROM Stores;
 DELETE FROM Chains;
+DELETE FROM ShoppingLists;
 DELETE FROM Shoppers;
 SET SQL_SAFE_UPDATES = 1;
 
