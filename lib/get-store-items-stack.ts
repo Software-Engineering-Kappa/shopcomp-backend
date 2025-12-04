@@ -11,32 +11,31 @@ import { Duration } from "aws-cdk-lib"
 import * as dotenv from "dotenv"
 dotenv.config()
 
-interface ListStoresStackProps extends cdk.StackProps {
+interface GetStoreItemsStackProps extends cdk.StackProps {
   apiEndpoint: apigw.RestApi,
   vpc: ec2.IVpc,
   securityGroup: ec2.ISecurityGroup,
   authorizer: apigw.IAuthorizer,
 }
 
-export class ListStoresStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: ListStoresStackProps) {
+export class GetStoreItemsStack extends cdk.Stack {
+  constructor(scope: Construct, id: string, props?: GetStoreItemsStackProps) {
     super(scope, id, props)
 
-    // BEGIN: /chains/{chainId}/stores endpoint
+    // BEGIN: /chains/{chainId}/stores/{storeId}/items endpoint
 
-    const listStoresFn = new lambdaNodejs.NodejsFunction(this, "listStores", {
+    const getStoreItemsFn = new lambdaNodejs.NodejsFunction(this, "getStoreItems", {
       runtime: lambda.Runtime.NODEJS_22_X,
-      handler: "listStores.handler",
-      code: lambda.Code.fromAsset(path.join(__dirname, "listStores")),
+      handler: "getStoreItems.handler",
+      code: lambda.Code.fromAsset(path.join(__dirname, "getStoreItems")),
       vpc: props!.vpc,
       securityGroups: [props!.securityGroup],
       timeout: Duration.seconds(3),
       environment: {
-        LOG_USER_POOL_CLIENT_ID: process.env.USER_POOL_CLIENT_ID ?? "",
-        DB_HOST: process.env.DB_HOST ?? "",
-        DB_USER: process.env.DB_USER ?? "",
-        DB_PASSWORD: process.env.DB_PASSWORD ?? "",
-        DB_NAME: process.env.DB_NAME ?? "",
+        DB_HOST: process.env.DB_HOST!,
+        DB_USER: process.env.DB_USER!,
+        DB_PASSWORD: process.env.DB_PASSWORD!,
+        DB_NAME: process.env.DB_NAME!,
       }
     })
 
@@ -52,11 +51,20 @@ export class ListStoresStack extends cdk.Stack {
     const storesResource = chainIdResource.getResource("stores")
       ?? chainIdResource.addResource("stores")
 
-    storesResource.addMethod("GET", new apigw.LambdaIntegration(listStoresFn), {
-      authorizer: props!.authorizer,
-      authorizationType: apigw.AuthorizationType.COGNITO
-    });
+    // /chains/{chainId}/stores/{storeId}
+    const storeIdResource = storesResource.getResource("{storeId}")
+      ?? storesResource.addResource("{storeId}")
 
-    // END: /chains/{chainId}/stores endpoint
+    // /chains/{chainId}/stores/{storeId}/items
+    const itemsResource = storeIdResource.getResource("items")
+      ?? storeIdResource.addResource("items")
+
+    // TODO: add authorizer
+    itemsResource.addMethod("GET", new apigw.LambdaIntegration(getStoreItemsFn), {
+      authorizer: props!.authorizer,
+      authorizationType: apigw.AuthorizationType.COGNITO,
+    })
+
+    // BEGIN: /chains/{chainId}/stores/{storeId}/items endpoint
   }
 }

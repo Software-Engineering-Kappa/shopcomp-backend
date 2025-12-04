@@ -44,7 +44,10 @@ export class ListChainsStack extends cdk.Stack {
         const chainsResource = props!.apiEndpoint.root.getResource("chains")
             ?? props!.apiEndpoint.root.addResource("chains");
 
-        chainsResource.addMethod("GET", new apigw.LambdaIntegration(listChainsFn));
+        chainsResource.addMethod("GET", new apigw.LambdaIntegration(listChainsFn), {
+            authorizer: props!.authorizer,
+            authorizationType: apigw.AuthorizationType.COGNITO
+        });
         // ---------------------------------------------------------------
     }
 }

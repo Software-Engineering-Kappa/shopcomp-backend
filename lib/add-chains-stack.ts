@@ -44,7 +44,10 @@ export class AddChainsStack extends cdk.Stack {
     const chainsResource = props!.apiEndpoint.root.getResource("chains")
       ?? props!.apiEndpoint.root.addResource("chains")
 
-    chainsResource.addMethod("POST", new apigw.LambdaIntegration(addChainsFn))
+    chainsResource.addMethod("POST", new apigw.LambdaIntegration(addChainsFn), {
+      authorizer: props!.authorizer,
+      authorizationType: apigw.AuthorizationType.COGNITO
+    });
 
     // -------------- /chains endpoint --------------
   }

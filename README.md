@@ -11,7 +11,7 @@
 
 3. **Create stack**
 - Edit `shopcomp-backend.ts` in `bin` to add a new stack (in alphabetical order)
-- Add `[usecase-name].stack` in `lib`
+- Add `[usecase-name]-stack.ts` in `lib`
 
 4. **Install dependencies**  
 - `cd lib/[lambdaName]`
