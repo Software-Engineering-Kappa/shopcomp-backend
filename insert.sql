@@ -7,8 +7,6 @@ DELETE FROM Chains;
 DELETE FROM Shoppers;
 SET SQL_SAFE_UPDATES = 1;
 
-
-
 INSERT INTO Chains VALUES (1, "Market Basket");
 INSERT INTO Chains VALUES (2, "BJs");
 INSERT INTO Chains VALUES (3, "Price Chopper");
@@ -43,3 +41,10 @@ INSERT INTO Items VALUES (6, "Whole Chicken", "Meat", 11.77);
 INSERT INTO Purchases VALUES (6, 11.77, "2025-10-26 11:17:00", 3, 6);
 INSERT INTO Items VALUES (7, "Ground Beef", "Meat", 8.99);
 INSERT INTO Purchases VALUES (7, 8.99, "2025-10-26 11:17:00", 3, 7);
+
+-- Shopping Lists
+INSERT INTO ShoppingLists VALUES (1, "Weekly Groceries", "Groceries", 'c4f85428-a0f1-70aa-bd7b-f6169dfde1c5');
+INSERT INTO ShoppingLists VALUES (2, "Birthday Party Supplies", "Party", 'c4f85428-a0f1-70aa-bd7b-f6169dfde1c5');
+INSERT INTO ShoppingLists VALUES (3, "Hardware Store Run", "Hardware", 'c4f85428-a0f1-70aa-bd7b-f6169dfde1c5');
+INSERT INTO ShoppingLists VALUES (4, "Holiday Shopping", "Gifts", 'c4f85428-a0f1-70aa-bd7b-f6169dfde1c5');
+INSERT INTO ShoppingLists VALUES (5, "Office Supplies", "Office", 'c4f85428-a0f1-70aa-bd7b-f6169dfde1c5');
