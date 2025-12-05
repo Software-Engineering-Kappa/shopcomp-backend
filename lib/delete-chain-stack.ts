@@ -41,12 +41,6 @@ export class DeleteChainStack extends cdk.Stack {
       }
     })
 
-    // Give function permission to list user groups
-    deleteChainFn.addToRolePolicy(new iam.PolicyStatement({
-      actions: ["cognito-idp:AdminListGroupsForUser"],
-      resources: ["*"],
-    }))
-
     // /chains
     const chainsResource = props!.apiEndpoint.root.getResource("chains")
       ?? props!.apiEndpoint.root.addResource("chains")
