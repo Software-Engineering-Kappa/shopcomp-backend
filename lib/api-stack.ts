@@ -57,21 +57,19 @@ export class ApiStack extends cdk.Stack {
     // Add OPTIONS handler for the root itself
     this.apiEndpoint.root.addMethod("OPTIONS", new apigw.LambdaIntegration(optionsHandler))
 
-    // Make error responses still have CORS headers
-    // this.apiEndpoint.addGatewayResponse("cors4xx", {
-    //   type: apigw.ResponseType.DEFAULT_4XX,
-    //   responseHeaders: {
-    //     "Access-Control-Allow-Origin": "method.request.header.origin",
-    //     "Access-Control-Allow-Credentials": "'true'",
-    //   },
-    // });
-    //
-    // this.apiEndpoint.addGatewayResponse("cors5xx", {
-    //   type: apigw.ResponseType.DEFAULT_5XX,
-    //   responseHeaders: {
-    //     "Access-Control-Allow-Origin": "method.request.header.origin",
-    //     "Access-Control-Allow-Credentials": "'true'",
-    //   },
-    // });
+    this.apiEndpoint.addGatewayResponse('Custom4XXResponse', {
+      type: apigw.ResponseType.DEFAULT_4XX,
+      statusCode: '403',
+      responseHeaders: {
+        'Access-Control-Allow-Origin': "'*'",
+        'Access-Control-Allow-Headers': "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+        'Access-Control-Allow-Methods': "'OPTIONS,GET,PUT,POST,DELETE,PATCH'",
+      },
+      templates: {
+        'application/json': JSON.stringify({
+          message: '$context.error.message',
+        }),
+      },
+    })
   }
 }
