@@ -21,6 +21,7 @@ import { ShowAccountDashboardStack } from "../lib/show-account-dashboard-stack"
 import { ReviewActivityStack } from '../lib/review-activity-stack'
 import { ListReceiptsStack } from '../lib/list-receipts-stack'
 import { ListShoppingListsStack } from '../lib/list-shopping-list-stack'
+import { AddShoppingListStack } from '../lib/add-shopping-list-stack'
 
 // import { AndrewStack } from "../lib/andrew-stack"
 // import { OwenStack } from "../lib/owen-stack"
@@ -42,6 +43,13 @@ const apiStack = new ApiStack(app, "ApiStack", {
 const vpcStack = new VpcStack(app, "VpcStack", {})
 
 new AddReceiptsStack(app, "AddReceiptsStack", {
+  apiEndpoint: apiStack.apiEndpoint,
+  vpc: vpcStack.vpc,
+  securityGroup: vpcStack.securityGroup,
+  authorizer: apiStack.authorizer,
+})
+
+new AddShoppingListStack(app, "AddShoppingListStack", {
   apiEndpoint: apiStack.apiEndpoint,
   vpc: vpcStack.vpc,
   securityGroup: vpcStack.securityGroup,
