@@ -4,6 +4,7 @@ import * as cdk from 'aws-cdk-lib/core'
 import { AddStoresStack } from '../lib/add-stores-stack'
 import { AddChainsStack } from '../lib/add-chains-stack'
 import { AddReceiptsStack } from '../lib/add-receipts-stack'
+import { AddShoppingListStack } from '../lib/add-shopping-list-stack'
 import { AuthorizationStack } from '../lib/authorization-stack'
 import { ApiStack } from "../lib/api-stack"
 import { VpcStack } from "../lib/vpc-stack"
@@ -42,6 +43,13 @@ const apiStack = new ApiStack(app, "ApiStack", {
 const vpcStack = new VpcStack(app, "VpcStack", {})
 
 new AddReceiptsStack(app, "AddReceiptsStack", {
+  apiEndpoint: apiStack.apiEndpoint,
+  vpc: vpcStack.vpc,
+  securityGroup: vpcStack.securityGroup,
+  authorizer: apiStack.authorizer,
+})
+
+new AddShoppingListStack(app, "AddShoppingListStack", {
   apiEndpoint: apiStack.apiEndpoint,
   vpc: vpcStack.vpc,
   securityGroup: vpcStack.securityGroup,
