@@ -6,6 +6,7 @@ import * as lambdaNodejs from "aws-cdk-lib/aws-lambda-nodejs";
 import * as path from "node:path"
 import * as ec2 from "aws-cdk-lib/aws-ec2"
 import { Duration } from "aws-cdk-lib"
+import * as iam from "aws-cdk-lib/aws-iam"
 
 // Load environment variables in `.env` file
 import * as dotenv from "dotenv"
@@ -40,6 +41,12 @@ export class DeleteChainStack extends cdk.Stack {
       }
     })
 
+    // Give function permission to list user groups
+    deleteChainFn.addToRolePolicy(new iam.PolicyStatement({
+      actions: ["cognito-idp:AdminListGroupsForUser"],
+      resources: ["*"],
+    }))
+
     // /chains
     const chainsResource = props!.apiEndpoint.root.getResource("chains")
       ?? props!.apiEndpoint.root.addResource("chains")
@@ -49,8 +56,8 @@ export class DeleteChainStack extends cdk.Stack {
       ?? chainsResource.addResource("{chainId}")
 
     chainIdResource.addMethod("DELETE", new apigw.LambdaIntegration(deleteChainFn), {
-      // authorizer: props!.authorizer,
-      // authorizationType: apigw.AuthorizationType.COGNITO,
+      authorizer: props!.authorizer,
+      authorizationType: apigw.AuthorizationType.COGNITO,
     })
 
     // END: /chains/{chainId} endpoint
