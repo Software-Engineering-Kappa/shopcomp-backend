@@ -21,19 +21,6 @@ export class ApiStack extends cdk.Stack {
     // REST API Gateway configuration
     this.apiEndpoint = new apigw.RestApi(this, "shopcompapi", {
       restApiName: "ShopcompAPI",      // Name that appears in API Gateway page
-
-      // Recommended: CORS config
-      // defaultCorsPreflightOptions: {
-      //   allowOrigins: [
-      //     "http://localhost:3000",    // local development
-      //     "http://localhost:3001",    // local development
-      //     "http://shop-comp-s3-bucket.s3-website-us-east-1.amazonaws.com"
-      //   ],
-      //   allowCredentials: true,
-      //   allowMethods: apigw.Cors.ALL_METHODS,
-      //   allowHeaders: apigw.Cors.DEFAULT_HEADERS,
-      // },
-      // defaultCorsPreflightOptions: undefined,
     })
 
     // Create authorizer for this user pool
@@ -57,21 +44,19 @@ export class ApiStack extends cdk.Stack {
     // Add OPTIONS handler for the root itself
     this.apiEndpoint.root.addMethod("OPTIONS", new apigw.LambdaIntegration(optionsHandler))
 
-    // Make error responses still have CORS headers
-    // this.apiEndpoint.addGatewayResponse("cors4xx", {
-    //   type: apigw.ResponseType.DEFAULT_4XX,
-    //   responseHeaders: {
-    //     "Access-Control-Allow-Origin": "method.request.header.origin",
-    //     "Access-Control-Allow-Credentials": "'true'",
-    //   },
-    // });
-    //
-    // this.apiEndpoint.addGatewayResponse("cors5xx", {
-    //   type: apigw.ResponseType.DEFAULT_5XX,
-    //   responseHeaders: {
-    //     "Access-Control-Allow-Origin": "method.request.header.origin",
-    //     "Access-Control-Allow-Credentials": "'true'",
-    //   },
-    // });
+    // Attach CORS headers to 4XX error codes at the API Gateway level
+    this.apiEndpoint.addGatewayResponse('Custom4XXResponse', {
+      type: apigw.ResponseType.DEFAULT_4XX,
+      responseHeaders: {
+        'Access-Control-Allow-Origin': "'*'",
+        'Access-Control-Allow-Headers': "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+        'Access-Control-Allow-Methods': "'OPTIONS,GET,PUT,POST,DELETE,PATCH'",
+      },
+      // templates: {
+      //   'application/json': JSON.stringify({
+      //     message: '$context.error.message',
+      //   }),
+      // },
+    })
   }
 }
