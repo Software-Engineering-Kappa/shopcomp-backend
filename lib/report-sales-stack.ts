@@ -22,7 +22,7 @@ export class ReportSalesStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: ReportSalesStackProps) {
     super(scope, id, props)
 
-    // BEGIN: /chains/sales endpoint
+    // BEGIN: /sales endpoint
 
     const reportSalesFn = new lambdaNodejs.NodejsFunction(this, "reportSales", {
       runtime: lambda.Runtime.NODEJS_22_X,
@@ -39,19 +39,15 @@ export class ReportSalesStack extends cdk.Stack {
       }
     })
 
-    // /chains
-    const chainsResource = props!.apiEndpoint.root.getResource("chains")
-      ?? props!.apiEndpoint.root.addResource("chains")
+    // /sales
+    const salesResource = props!.apiEndpoint.root.getResource("sales")
+      ?? props!.apiEndpoint.root.addResource("sales")
 
-    // /chains/sales
-    const chainSales = chainsResource.getResource("sales")
-      ?? chainsResource.addResource("sales")
-
-    chainSales.addMethod("GET", new apigw.LambdaIntegration(reportSalesFn), {
+    salesResource.addMethod("GET", new apigw.LambdaIntegration(reportSalesFn), {
       authorizer: props!.authorizer,
       authorizationType: apigw.AuthorizationType.COGNITO,
     })
 
-    // END: /chains/sales endpoint
+    // END: /sales endpoint
   }
 }
