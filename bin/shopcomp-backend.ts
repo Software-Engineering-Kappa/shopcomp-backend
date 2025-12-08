@@ -20,6 +20,7 @@ import { ListPurchasesStack } from "../lib/list-purchases-stack"
 import { ListStoresStack } from "../lib/list-stores-stack"
 import { LoginShopperStack } from "../lib/login-shopper-stack"
 import { RegisterShopperStack } from "../lib/register-shopper-stack"
+import { ReportSalesStack } from "../lib/report-sales-stack"
 import { ResendConfirmationStack } from "../lib/resend-confirmation-stack"
 import { ShowAccountDashboardStack } from "../lib/show-account-dashboard-stack"
 import { ReviewActivityStack } from '../lib/review-activity-stack'
@@ -166,6 +167,13 @@ new RegisterShopperStack(app, "RegisterShopperStack", {
   apiEndpoint: apiStack.apiEndpoint,
   vpc: vpcStack.vpc,
   securityGroup: vpcStack.securityGroup,
+})
+
+new ReportSalesStack(app, "ReportSalesStack", {
+  apiEndpoint: apiStack.apiEndpoint,
+  vpc: vpcStack.vpc,
+  securityGroup: vpcStack.securityGroup,
+  authorizer: apiStack.authorizer,
 })
 
 new ResendConfirmationStack(app, "ResendConfirmationStack", {
