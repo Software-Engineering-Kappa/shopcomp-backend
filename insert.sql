@@ -43,3 +43,12 @@ INSERT INTO Items VALUES (6, "Whole Chicken", "Meat", 11.77);
 INSERT INTO Purchases VALUES (6, 11.77, "2025-10-26 11:17:00", 3, 6);
 INSERT INTO Items VALUES (7, "Ground Beef", "Meat", 8.99);
 INSERT INTO Purchases VALUES (7, 8.99, "2025-10-26 11:17:00", 3, 7);
+
+
+-- Shoppinglist #1
+INSERT INTO 
+
+    { shoppingListID: 1, name: "Milk", category: "Dairy", quantity: 2, itemID: 1 },
+    { shoppingListID: 1, name: "Eggs", category: "Dairy", quantity: 12, itemID: 2 },
+    { shoppingListID: 1, name: "Bread", category: "Bakery", quantity: 1, itemID: 3 },
+    { shoppingListID: 1, name: "Apples", category: "Fruits", quantity: 6, itemID: 4 },
