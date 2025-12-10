@@ -23,6 +23,7 @@ import { RegisterShopperStack } from "../lib/register-shopper-stack"
 import { ReportSalesStack } from "../lib/report-sales-stack"
 import { ResendConfirmationStack } from "../lib/resend-confirmation-stack"
 import { ShowAccountDashboardStack } from "../lib/show-account-dashboard-stack"
+import { ShowAdminDashboardStack } from "../lib/show-admin-dashboard-stack"
 import { ReviewActivityStack } from '../lib/review-activity-stack'
 import { ListReceiptsStack } from '../lib/list-receipts-stack'
 import { ListShoppingListsStack } from '../lib/list-shopping-list-stack'
@@ -212,6 +213,12 @@ new ShowAccountDashboardStack(app, "ShowAccountDashboardStack", {
   authorizer: apiStack.authorizer,
 })
 
+new ShowAdminDashboardStack(app, "ShowAdminDashboardStack", {
+  apiEndpoint: apiStack.apiEndpoint,
+  vpc: vpcStack.vpc,
+  securityGroup: vpcStack.securityGroup,
+  authorizer: apiStack.authorizer,
+})
 
 // "Master" lambda function stack
 // const lambdaStack = new LambdaStack(app, "LambdaStack", {
