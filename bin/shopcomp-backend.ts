@@ -29,6 +29,9 @@ import { ListReceiptsStack } from '../lib/list-receipts-stack'
 import { ListShoppingListsStack } from '../lib/list-shopping-list-stack'
 import { DeletePurchaseStack } from '../lib/delete-purchase-stack'
 import { ListItemsOnReceiptStack } from '../lib/list-items-on-receipt-stack'
+import { ListItemsOnShoppingListStack } from '../lib/list-items-on-shopping-list-stack'
+import { AddItemToShoppingListStack } from '../lib/add-item-to-shopping-list-stack'
+import { DeleteShoppingListItemStack } from '../lib/delete-shopping-list-item-stack'
 
 // import { AndrewStack } from "../lib/andrew-stack"
 // import { OwenStack } from "../lib/owen-stack"
@@ -77,7 +80,21 @@ new AddChainsStack(app, "AddChainsStack", {
   authorizer: apiStack.authorizer,
 })
 
+new AddItemToShoppingListStack(app, "AddItemToShoppingListStack", {
+  apiEndpoint: apiStack.apiEndpoint,
+  vpc: vpcStack.vpc,
+  securityGroup: vpcStack.securityGroup,
+  authorizer: apiStack.authorizer,
+})
+
 new ListItemsOnReceiptStack(app, "ListItemsOnReceiptStack", {
+  apiEndpoint: apiStack.apiEndpoint,
+  vpc: vpcStack.vpc,
+  securityGroup: vpcStack.securityGroup,
+  authorizer: apiStack.authorizer,
+})
+
+new ListItemsOnShoppingListStack(app, "ListItemsOnShoppingListStack", {
   apiEndpoint: apiStack.apiEndpoint,
   vpc: vpcStack.vpc,
   securityGroup: vpcStack.securityGroup,
@@ -92,6 +109,13 @@ new AddItemToReceiptStack(app, "AddItemToReceiptStack", {
 })
 
 new DeletePurchaseStack (app, "DeletePurchaseStack", {
+  apiEndpoint: apiStack.apiEndpoint,
+  vpc: vpcStack.vpc,
+  securityGroup: vpcStack.securityGroup,
+  authorizer: apiStack.authorizer,
+})
+
+new DeleteShoppingListItemStack(app, "DeleteShoppingListItemStack", {
   apiEndpoint: apiStack.apiEndpoint,
   vpc: vpcStack.vpc,
   securityGroup: vpcStack.securityGroup,
