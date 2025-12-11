@@ -12,6 +12,7 @@ import { DeleteStoreStack } from "../lib/delete-store-stack"
 import { DeleteChainStack } from "../lib/delete-chain-stack"
 import { VpcStack } from "../lib/vpc-stack"
 import { ConfirmShopperStack } from "../lib/confirm-shopper-stack"
+import { GetReceiptInfoStack } from "../lib/get-receipt-info-stack"
 import { GetStoreInfoStack } from "../lib/get-store-info-stack"
 import { GetStoreItemsStack } from "../lib/get-store-items-stack"
 import { GetChainInfoStack } from "../lib/get-chain-info-stack"
@@ -143,6 +144,13 @@ new DeleteStoreStack(app, "DeleteStoreStack", {
 })
 
 new GetChainInfoStack(app, "GetChainInfoStack", {
+  apiEndpoint: apiStack.apiEndpoint,
+  vpc: vpcStack.vpc,
+  securityGroup: vpcStack.securityGroup,
+  authorizer: apiStack.authorizer,
+})
+
+new GetReceiptInfoStack(app, "GetReceiptInfoStack", {
   apiEndpoint: apiStack.apiEndpoint,
   vpc: vpcStack.vpc,
   securityGroup: vpcStack.securityGroup,
