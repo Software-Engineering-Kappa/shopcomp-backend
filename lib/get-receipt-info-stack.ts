@@ -48,7 +48,7 @@ export class GetReceiptInfoStack extends cdk.Stack {
     const receiptIdResource = receiptsResource.getResource("{receiptId}")
       ?? receiptsResource.addResource("{receiptId}");
 
-    receiptsResource.addMethod("GET", new apigw.LambdaIntegration(getReceiptInfoFn), {
+    receiptIdResource.addMethod("GET", new apigw.LambdaIntegration(getReceiptInfoFn), {
         authorizer: props!.authorizer,
         authorizationType: apigw.AuthorizationType.COGNITO
     });
