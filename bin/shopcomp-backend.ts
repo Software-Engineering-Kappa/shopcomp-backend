@@ -22,6 +22,7 @@ import { ListStoresStack } from "../lib/list-stores-stack"
 import { LoginShopperStack } from "../lib/login-shopper-stack"
 import { RegisterShopperStack } from "../lib/register-shopper-stack"
 import { ReportSalesStack } from "../lib/report-sales-stack"
+import { ReportOptionsStack } from "../lib/report-options-stack"
 import { ResendConfirmationStack } from "../lib/resend-confirmation-stack"
 import { ShowAccountDashboardStack } from "../lib/show-account-dashboard-stack"
 import { ShowAdminDashboardStack } from "../lib/show-admin-dashboard-stack"
@@ -219,6 +220,13 @@ new RegisterShopperStack(app, "RegisterShopperStack", {
 })
 
 new ReportSalesStack(app, "ReportSalesStack", {
+  apiEndpoint: apiStack.apiEndpoint,
+  vpc: vpcStack.vpc,
+  securityGroup: vpcStack.securityGroup,
+  authorizer: apiStack.authorizer,
+})
+
+new ReportOptionsStack(app, "ReportOptionsStack", {
   apiEndpoint: apiStack.apiEndpoint,
   vpc: vpcStack.vpc,
   securityGroup: vpcStack.securityGroup,
